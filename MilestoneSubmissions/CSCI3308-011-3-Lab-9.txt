@@ -1,0 +1,20 @@
+Team Number: 3
+Team Name: GLiNT 
+Team Names and Emails:
+•	George Bauer geba6807@colorado.edu
+•	Nhan Do nhdo3427@colorado.edu
+•	Leon Steinbach lest9540@colorado.edu
+•	Trinity Than trth5210@colorado.edu
+App Name: Spellsaver
+App Description: 
+•	Track regular expenses
+•	Track spending with a daily/weekly/monthly/yearly breakdown
+•	Email notifications for reminders about expenses due/monthly budget reached/make updates to applications
+•	Track budgets with charts 
+Target Audience: People who are looking for an easy way to track their spending
+Vison Statement: To empower people to be financially savvy.
+Development Method: Using Taiga (https://tree.taiga.io/project/nuc134r-csci3308-group-project/kanban)
+Communication Plan: Discord
+Meeting Plan (Group): Check in on Wednesdays at any time over Discord
+Meeting Plan (TA): Fridays @ 2PM, remote through Zoom
+Useful resources: shadcn, chartjs, nodemailer, aceternity ui
