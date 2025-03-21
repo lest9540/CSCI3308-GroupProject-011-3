@@ -1,0 +1,15 @@
+3/21/2025 -------------
+Add another card that says you can only afford to spend this much on the banking page
+a. Kind of like an allowance page or own card
+b. pie chart can have a part that accounts for concurrent payments
+
+What else does the app/ website do?
+a. Splitwise - a tool that lets you put in yoru transaction amount and who you are paying it to. 
+b. Create a system with this that there is a due to pay you or you are due to pay someone else
+c. In Splitwise if you owe someone and then someone owes you then that other person owes the person you owe
+    - This should add some complexity to our website/ app
+    - Should allow the username to have more meaning
+
+Meetings will be at 1:15PM-1:30PM
+
+Following Week - Expect to have commits, and will show individual commits during meetings
