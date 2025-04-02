@@ -1,0 +1,25 @@
+services:
+  db:
+    image: postgres:14
+    env_file: .env
+    expose:
+      - '5432'
+    volumes:
+      - GroupProject-011-3-services:/var/lib/postgresql/data
+      - ./init_data:/docker-entrypoint-initdb.d
+  web:
+    image: node:lts
+    user: 'root'
+    working_dir: /home/node/app
+    env_file: .env
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - db
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./:/home/node/app
+    command: 'npm start'
+volumes:
+  GroupProject-011-3-services:
