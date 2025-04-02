@@ -1,0 +1,14 @@
+{{>message}}
+
+<center>
+{{#each event}}
+    <div class="card" style="width: 25rem;">
+        <div class="card-body">
+            <h5 class="card-title">{{name}}</h5>
+            <h6 class="card-subtitle mb-2 text-muted">{{dates.start.localDate}}</h6>
+            <img src="{{images.[0].url}}" alt="oops, no image" width="275" height="175"><br><br>
+            <a href={{url}} class="btn btn-outline-success" role="button">Book Now</a>
+        </div>
+    </div>
+{{/each}}
+</center>
