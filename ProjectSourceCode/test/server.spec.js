@@ -6,6 +6,7 @@ const server = require('../index'); //TODO: Make sure the path to your index.js 
 
 const chai = require('chai'); // Chai HTTP provides an interface for live integration testing of the API's.
 const chaiHttp = require('chai-http');
+const { restart } = require('nodemon');
 chai.should();
 chai.use(chaiHttp);
 const {assert, expect} = chai;
@@ -39,6 +40,10 @@ describe('Server!', () => {
 // Explanation: The testcase will call the /add_user API with the following input
 // and expects the API to return a status of 200 along with the "Success" message.
 
+const html_start_regex = /^<!DOCTYPE html>.*/;
+const html_end_regex = /.*<\/html>$/;
+
+const register_regex = /.*<form action=.* method=.*>.*/
 describe('Testing Add User API', () => {
     it('positive : /register', done => {
       chai
@@ -47,7 +52,8 @@ describe('Testing Add User API', () => {
         .send({username: 'John Doe', password: 'scoobydoo'})
         .end((err, res) => {
           expect(res).to.have.status(200);
-          expect(res.body.message).to.equals('Success');
+          check = (html_start_regex.test(res.text) && html_end_regex.test(res.text) && register_regex.test(res.text))
+          assert(check == true);
           done();
         });
     });
