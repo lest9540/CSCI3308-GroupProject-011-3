@@ -32,19 +32,11 @@ describe('Server!', () => {
 
 // ********************************************************************************
 
-// Example Positive Testcase :
-// API: /add_user
-// Input: {id: 5, name: 'John Doe', dob: '2020-02-20'}
-// Expect: res.status == 200 and res.body.message == 'Success'
-// Result: This test case should pass and return a status 200 along with a "Success" message.
-// Explanation: The testcase will call the /add_user API with the following input
-// and expects the API to return a status of 200 along with the "Success" message.
-
 const html_start_regex = /^<!DOCTYPE html>.*/;
 const html_end_regex = /.*<\/html>$/;
 
 const register_regex = /.*<form action=.* method=.*>.*/
-describe('Testing Add User API', () => {
+describe('Testing Register User API', () => {
     it('positive : /register', done => {
       chai
         .request(server)
@@ -54,6 +46,18 @@ describe('Testing Add User API', () => {
           expect(res).to.have.status(200);
           check = (html_start_regex.test(res.text) && html_end_regex.test(res.text) && register_regex.test(res.text))
           assert(check == true);
+          done();
+        });
+    });
+
+    it('Negative : /register. Checking invalid name', done => {
+      chai
+        .request(server)
+        .post('/register')
+        .send({username: undefined, password: 'scoobydoo'})
+        .end((err, res) => {
+          expect(res).to.have.status(400);
+          console.log("\nres.text:\n" + res.text + "\n");
           done();
         });
     });

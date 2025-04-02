@@ -85,6 +85,9 @@ const auth = (req, res, next) => {
 
 // TODO - Include your API routes here
 
+app.get('/welcome', (req, res) => {
+  res.json({status: 'success', message: 'Welcome!'});
+});
 
 app.get('/login', (req, res) => {
     res.render('pages/login.hbs')
@@ -121,13 +124,13 @@ app.post('/register', async (req, res) => {
     
     // To-DO: Insert username and hashed password into the 'users' table
     db.none('INSERT INTO users(username, password) VALUES($1, $2)', [req.body.username, hash])
-    .then(() => {
+      .then(() => {
         res.redirect('/login');
-    })
+      })
       .catch(error => {
         console.log(error);
-        res.redirect('/register');
-    });
+        res.redirect(400, '/register');
+      });
 });
 
 // Authentication Required
@@ -156,7 +159,7 @@ app.get('/discover', (req, res) => {
     })
     .catch(error => { 
         console.log(error);
-        res.render('pages/discover', {event: []});
+        res.render(400, 'pages/discover', {event: []});
     });
 });
 
