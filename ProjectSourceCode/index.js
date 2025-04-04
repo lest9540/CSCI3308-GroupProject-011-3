@@ -125,6 +125,10 @@ app.get('/user', (req, res) => {
   res.render('pages/user')
 });
 
+app.get('/settings', (req, res) => {
+    res.render('pages/settings')
+});
+
 app.get('/discover', (req, res) => {
     axios({
         url: `https://app.ticketmaster.com/discovery/v2/events.json`,
