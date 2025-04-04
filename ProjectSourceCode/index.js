@@ -74,6 +74,16 @@ app.get('/login', (req, res) => {
     res.render('pages/login.hbs')
 });
 
+//---------------------------------------------------------------------------------------------
+//front_page branch
+
+// .get for the front page
+app.get('/front', (req, res) => {
+  res.render('pages/front');
+});
+
+//---------------------------------------------------------------------------------------------
+
 app.post("/login", async (req, res) => {
     try {db.any('SELECT * FROM users WHERE username = $1', [req.body.username]) 
         .then( async user => { 
