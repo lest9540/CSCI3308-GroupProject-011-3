@@ -36,6 +36,8 @@ const html_start_regex = /^<!DOCTYPE html>.*/;
 const html_end_regex = /.*<\/html>$/;
 
 const register_regex = /.*<form action=.* method=.*>.*/
+
+// Test cases for /register API, positive and negative
 describe('Testing Register User API', () => {
     it('positive : /register', done => {
       chai
@@ -62,3 +64,11 @@ describe('Testing Register User API', () => {
         });
     });
   });
+
+
+  
+// ***************** TODO: 2 Test cases for Redirect/Render ***********************
+
+// ********************************************************************************
+
+// Testing for Redirect and Render
