@@ -32,11 +32,19 @@ describe('Server!', () => {
 
 // ********************************************************************************
 
+<<<<<<< HEAD
 // const html_start_regex = /^<!DOCTYPE html>.*/;
 // const html_end_regex = /.*<\/html>$/;
 
 // Test cases for /register API, positive and negative
 const login_regex = /.*<h2>Log In<\/h2>.*/
+=======
+const html_start_regex = /^<!DOCTYPE html>.*/;
+const html_end_regex = /.*<\/html>$/;
+
+// Test cases for /register API, positive and negative
+const register_regex = /.*<h2>Log In<\/h2>.*/
+>>>>>>> a1054d9 (altered /register test case for better page detection)
 describe('Testing Register User API', () => {
     it('positive : /register', done => {
       chai
@@ -45,7 +53,11 @@ describe('Testing Register User API', () => {
         .send({username: 'John Doe', password: 'scoobydoo', email: 'lest9540@colorado.edu'})
         .end((err, res) => {
           expect(res).to.have.status(200);
+<<<<<<< HEAD
           check = login_regex.test(res.text);
+=======
+          check = (html_start_regex.test(res.text) && html_end_regex.test(res.text) && register_regex.test(res.text));
+>>>>>>> a1054d9 (altered /register test case for better page detection)
           assert(check == true);
           done();
         });
