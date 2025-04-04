@@ -1,21 +1,13 @@
-// *****************************************************
-// <!-- Section 1 : Import Dependencies -->
-// *****************************************************
-
-const express = require('express'); // To build an application server or API
+const express = require('express');
 const app = express();
 const handlebars = require('express-handlebars');
 const Handlebars = require('handlebars');
 const path = require('path');
-const pgp = require('pg-promise')(); // To connect to the Postgres DB from the node server
+const pgp = require('pg-promise')();
 const bodyParser = require('body-parser');
-const session = require('express-session'); // To set the session object. To store or access session data, use the `req.session`, which is (generally) serialized as JSON by the store.
-const bcrypt = require('bcryptjs'); //  To hash passwords
-const axios = require('axios'); // To make HTTP requests from our server. We'll learn more about it in Part C.
-
-// *****************************************************
-// <!-- Section 2 : Connect to DB -->
-// *****************************************************
+const session = require('express-session');
+const bcrypt = require('bcryptjs');
+const axios = require('axios');
 
 // create `ExpressHandlebars` instance and configure the layouts and partials dir.
 const hbs = handlebars.create({
@@ -26,28 +18,22 @@ const hbs = handlebars.create({
 
 // database configuration
 const dbConfig = {
-  host: 'db', // the database server
-  port: 5432, // the database port
-  database: process.env.POSTGRES_DB, // the database name
-  user: process.env.POSTGRES_USER, // the user account to connect with
-  password: process.env.POSTGRES_PASSWORD, // the password of the user account
+  host: 'db',
+  port: 5432,
+  database: process.env.POSTGRES_DB,
+  user: process.env.POSTGRES_USER,
+  password: process.env.POSTGRES_PASSWORD,
 };
 
 const db = pgp(dbConfig);
-
-// test your database
 db.connect()
   .then(obj => {
-    console.log('Database connection successful'); // you can view this message in the docker compose logs
-    obj.done(); // success, release the connection;
+    console.log('Database connection successful');
+    obj.done();
   })
   .catch(error => {
     console.log('ERROR:', error.message || error);
   });
-
-// *****************************************************
-// <!-- Section 3 : App Settings -->
-// *****************************************************
 
 // Register `hbs` as our view engine using its bound `engine()` function.
 app.engine('hbs', hbs.engine);
@@ -73,17 +59,12 @@ app.use(
 // Authentication Middleware.
 const auth = (req, res, next) => {
     if (!req.session.user) {
-      // Default to login page.
       return res.redirect('/login');
     }
     next();
 };
 
-// *****************************************************
-// <!-- Section 4 : API Routes -->
-// *****************************************************
-
-// TODO - Include your API routes here
+// API Routes //
 
 app.get('/welcome', (req, res) => {
   res.json({status: 'success', message: 'Welcome!'});
@@ -133,11 +114,15 @@ app.post('/register', async (req, res) => {
       });
 });
 
-// Authentication Required
+// Authentication Required past here
 app.use(auth);
 
 app.get('/', (req, res) => {
     res.redirect('/login');
+});
+
+app.get('/user', (req, res) => {
+  res.render('pages/user')
 });
 
 app.get('/discover', (req, res) => {
