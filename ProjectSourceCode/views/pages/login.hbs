@@ -1,30 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 </head>
 
 <body>
     {{> message}}
-    <div>
-        <h2>Log In Page</h2>
+    <div style="display: flex; flex-direction: column; align-items: center;">
+        
+        <h2 style="margin-top: 60px;">Login Page</h2>
         <form action="/login" method="POST">
-            <div>
+            <div class="mb-3">
                 <label for="username" class="fw-semibold">Username</label>
-                <input type="text" id="username" name="username">
+                <div><input type="text" id="username" name="username"></div>
             </div>
 
-            <div>
+            <div class="mb-3">
                 <label for="password" class="fw-semibold">Password</label>
-                <input type="password" id="password" name="password">
+                <div><input type="password" id="password" name="password"></div>
             </div>
 
-            <button>Submit</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
         </form>
 
         <div>
              Don't have an account? 
-            <a href="/register">Register an Account</a>
+            <a href="/register">Register</a>
         </div>
     </div>
 </body>
