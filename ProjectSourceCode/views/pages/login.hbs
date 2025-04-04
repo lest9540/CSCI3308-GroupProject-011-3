@@ -1,16 +1,31 @@
-{{#if message}}
-    <div class="alert alert-primary" role="alert">
-        {{message}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+</head>
+
+<body>
+    {{> message}}
+    <div>
+        <h2>Log In Page</h2>
+        <form action="/login" method="POST">
+            <div>
+                <label for="username" class="fw-semibold">Username</label>
+                <input type="text" id="username" name="username">
+            </div>
+
+            <div>
+                <label for="password" class="fw-semibold">Password</label>
+                <input type="password" id="password" name="password">
+            </div>
+
+            <button>Submit</button>
+        </form>
+
+        <div>
+             Don't have an account? 
+            <a href="/register">Register an Account</a>
+        </div>
     </div>
-{{/if}}
-<div>
-    <h2>Log In</h1>
-    <form action="/login" method="POST">
-        <h5>Username</h6>
-        <input type="text" id="username" name="username"></input><br>
-        <h5>Password</h6>
-        <input type="text" id="password" name="password"></input><br>
-        <button class="btn btn-primary" type="submit">Login</button>
-    </form>
-</div>
-{{! This branch with be associated with this page}}
+</body>
+</html>
