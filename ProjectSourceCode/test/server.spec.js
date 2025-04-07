@@ -28,7 +28,7 @@ describe('Server!', () => {
   });
 });
 
-// *********************** TODO: WRITE 2 UNIT TESTCASES **************************
+// *********************** User Register Page Test Cases **************************
 
 // ********************************************************************************
 
@@ -64,14 +64,14 @@ describe('Testing Register User API', () => {
   });
 
 
-  
-// ***************** TODO: 2 Test cases for Redirect/Render ***********************
+
+// ***************** Redirect/Render Test Cases ***********************
 
 // ********************************************************************************
 
 // Testing for Redirect
 describe('Testing Redirect', () => {
-  it('\test route should redirect to /login with 302 HTTP status code', done => {
+  it('\test route should redirect to /login with 200 HTTP status code', done => {
     chai
       .request(server)
       .get('/test')
