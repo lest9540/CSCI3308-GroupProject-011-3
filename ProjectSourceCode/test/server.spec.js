@@ -72,7 +72,7 @@ describe('Testing Register User API', () => {
 // Testing for Redirect
 const login_redirect_regex = /^127\.0\.0\.1.*\/login/
 describe('Testing Redirect', () => {
-  it('Positive : redirect to /login', done => {
+  it('\test route should redirect to /login with 200 HTTP status code', done => {
     chai
       .request(server)
       .get('/test')
