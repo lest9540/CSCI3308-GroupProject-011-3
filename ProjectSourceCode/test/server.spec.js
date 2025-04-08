@@ -45,7 +45,7 @@ describe('Testing Register User API', () => {
         .send({username: 'John Doe', password: 'scoobydoo', email: 'lest9540@colorado.edu'})
         .end((err, res) => {
           expect(res).to.have.status(200);
-          check = register_regex.test(res.text);
+          check = login_regex.test(res.text);
           assert(check == true);
           done();
         });
@@ -72,7 +72,7 @@ describe('Testing Register User API', () => {
 // Testing for Redirect
 const login_redirect_regex = /^127\.0\.0\.1.*\/login/
 describe('Testing Redirect', () => {
-  it('\test route should redirect to /login with 200 HTTP status code', done => {
+  it('Positive : redirect to /login', done => {
     chai
       .request(server)
       .get('/test')
