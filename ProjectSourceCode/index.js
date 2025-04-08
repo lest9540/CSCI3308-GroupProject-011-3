@@ -100,18 +100,15 @@ app.get('/register', (req, res) => {
 });
 
 app.post('/register', async (req, res) => {
-    //hash the password using bcrypt library
-    const hash = await bcrypt.hash(req.body.password, 10);
-    
-    // To-DO: Insert username and hashed password into the 'users' table
-    db.none('INSERT INTO users(username, password) VALUES($1, $2)', [req.body.username, hash])
-      .then(() => {
-        res.redirect('/login');
-      })
-      .catch(error => {
-        console.log(error);
-        res.redirect(400, '/register');
-      });
+  const hash = await bcrypt.hash(req.body.password, 10);
+  db.none('INSERT INTO users(username, password, email) VALUES($1, $2, $3)', [req.body.username, hash, req.body.email])
+    .then(() => {
+      res.redirect('/login');
+    })
+    .catch(error => {
+      console.log(error);
+      res.redirect(400, '/register');
+    });
 });
 
 // Authentication Required past here
