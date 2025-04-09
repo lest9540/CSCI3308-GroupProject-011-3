@@ -4,27 +4,86 @@
 <html>
 <head>
     <style>
-        
         .welcomeContainer {
             background-color: gray;
             height: 100vh;
-            text-align: center;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
+
+        .featuresContainers {
+            height: 100vh;
+            width: 100%;
+        }
+        
+        .featuresContainers h1 {
+            font-size: 40px;
+        }
+
+        .featureDisplay {
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .feature1 {
+            background-color: rgb(78, 200, 200);
+        }
+
+        .feature2 {
+            background-color:rgb(169, 103, 231);
+        }
+
+        .feature3 {
+            background-color:rgb(165, 94, 94);
+        }
+
+        .feature4 {
+            background-color: rgb(174, 203, 130);
+        }
+
     </style>
 </head>
 
 <body>
     <!-- Welcome and Logo Section -->
-        <div class="container mt-5 welcomeContainer" >
-            <h1 style="font-size: 100px;"> Welcome to SpellSaver </h1>
+    <div class="welcomeContainer" >
+        <h1 style="font-size: 100px;"> Welcome to SpellSaver </h1>
 
-            <div class="container mt-5"> 
-                <img src="https://placehold.co/300x300" class="rounded-circle mx-auto d-block" alt="Logo Here"> </img>
-            </div>
-
-            <p class="container mt-5" style="font-size: 30px"> Vision Statement goes here </p>
-
-            <a href="#scrollNext" style="display: block; text-align: center; font-size: 40px; margin-top: 30px; cursor: pointer;"> Arrow Here </a>
+        <div class="container mt-5"> 
+            <img src="https://placehold.co/300x300" class="rounded-circle mx-auto d-block" alt="Logo Here"> </img>
         </div>
+
+        <p style="font-size: 30px"> Vision Statement goes here </p>
+    </div>
+
+    <!-- Features -->
+    <div class="featuresContainers">
+        <div class="featureDisplay feature1">
+            <img src="https://placehold.co/300x300"> </img>
+            <h1> Testing text 1</h1>
+        </div>
+        
+        <div class="featureDisplay feature2">
+            <img src="https://placehold.co/300x300"> </img>
+            <h1> Testing text 2</h1>
+        </div>
+
+        <div class="featureDisplay feature3">
+            <img src="https://placehold.co/300x300"> </img>
+            <h1> Testing text 3</h1>
+        </div>
+
+        <div class="featureDisplay feature4">
+            <img src="https://placehold.co/300x300"> </img>
+            <h1> Testing text 4</h1>
+        </div>
+    </div>
 </body>
 </html>
