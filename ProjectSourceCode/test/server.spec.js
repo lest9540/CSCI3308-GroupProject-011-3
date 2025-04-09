@@ -45,7 +45,7 @@ describe('Testing Register User API', () => {
         .send({username: 'John Doe', password: 'scoobydoo', email: 'lest9540@colorado.edu'})
         .end((err, res) => {
           expect(res).to.have.status(200);
-          check = login_regex.test(res.text);
+          check = register_regex.test(res.text);
           assert(check == true);
           done();
         });
