@@ -78,7 +78,7 @@ app.post("/login", async (req, res) => {
     try {db.any('SELECT * FROM users WHERE username = $1', [req.body.username]) 
         .then( async user => { 
             if (!user.length) { // no user found
-                res.redirect('/register');
+              res.render('pages/login.hbs', {redirect: true});
             }
             else {
                 const match = await bcrypt.compare(req.body.password, user[0].password);
