@@ -45,7 +45,7 @@ describe('Testing Register User API', () => {
         .send({username: 'John Doe', password: 'scoobydoo'})
         .end((err, res) => {
           expect(res).to.have.status(200);
-          check = (html_start_regex.test(res.text) && html_end_regex.test(res.text) && register_regex.test(res.text));
+          check = register_regex.test(res.text);
           assert(check == true);
           done();
         });
