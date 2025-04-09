@@ -1,11 +1,32 @@
 {{>message}}
 <div>
-    <h2>Register</h1>
-    <form action="/register" method="POST">
-        <label>Username</label>
-        <input type="text" id="username" name="username"></input><br>
-        <label>Password</label>
-        <input type="text" id="password" name="password"></input><br>
-        <button class="btn btn-primary" type="submit">Register</button>
+<body>
+    <div style="display: flex; flex-direction: column; align-items: center;">
+        <h2 style="margin-top: 60px;">Register</h1>
+
+        <form action="/register" method="POST">
+            <div class="mb-3">
+                <label class="fw-semibold">Username</label>
+                <div><input type="text" id="username" name="username"></input><br></div>
+            </div>
+            
+            <div class="mb-3">
+                <label class="fw-semibold">Email</label>
+                <div><input type="text" id="email" name="email"></input><br></div>
+            </div>
+
+            <div class="mb-3">
+                <label class="fw-semibold">Password</label>
+                <div><input type="password" id="password" name="password"></input><br></div>
+            </div>
+
+            <button class="btn btn-primary" type="submit">Register</button>
     </form>
+        
+            <div>
+                Already have an account? 
+                <a href="/login">Login</a>
+            </div>
+    </div>
+</body>
 </div>

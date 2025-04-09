@@ -1,15 +1,40 @@
-{{#if message}}
-    <div class="alert alert-primary" role="alert">
-        {{message}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+</head>
+
+<body>
+    {{> message}}
+    <div style="display: flex; flex-direction: column; align-items: center;">
+        
+        <h2 style="margin-top: 60px;">Login Page</h2>
+        <form action="/login" method="POST">
+            <div class="mb-3">
+                <label for="username" class="fw-semibold">Username</label>
+                <div><input type="text" id="username" name="username"></div>
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="fw-semibold">Password</label>
+                <div><input type="password" id="password" name="password"></div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+
+        <div>
+             Don't have an account? 
+            <a href="/register">Register</a>
+        </div>
     </div>
-{{/if}}
-<div>
-    <h2>Log In</h1>
-    <form action="/login" method="POST">
-        <h5>Username</h6>
-        <input type="text" id="username" name="username"></input><br>
-        <h5>Password</h6>
-        <input type="text" id="password" name="password"></input><br>
-        <button class="btn btn-primary" type="submit">Login</button>
-    </form>
-</div>
+
+    {{!-- Adding a message that redirects if the username is not found in the database--}}
+    {{#if redirect}}
+        <script>
+            alert("Username not found, redirecting to register an account.");
+            window.location.href = "/register";
+        </script>
+    {{/if}}
+
+</body>
+</html>

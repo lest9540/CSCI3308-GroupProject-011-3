@@ -1,0 +1,18 @@
+User Acceptance Test 1:
+    - A user opting into notifcation emails recieves a confirmation/test email to verify the validity of their input email
+        lest9540@colorado.edu (valid email, acknowledgement for user) vs sandy.email (invalid email, no acknowledgement for user)
+    - will invoke the nodemail API to send from spellSave(email) to user
+    - Test Results:
+
+User Acceptance Test 2:
+    - If the user provides invalid username (empty/already in-use) during register, redirect to register page with message pointing out missing info
+        username: John Doe (already-in-use)/ <Empty>
+        password: scoobydoobydoo
+        email: <Empty>
+    - Rerenders the page with an error banner on page indicating invalid username
+    - Test Results:
+
+User Acceptance Test 3:
+    - User changes theme by selecting a new option in their user settings | default -> dark mode
+    - Re-renders page with dark mode css settings edited
+    - Test Results:
