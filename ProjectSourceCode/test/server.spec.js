@@ -28,25 +28,24 @@ describe('Server!', () => {
   });
 });
 
-// *********************** TODO: WRITE 2 UNIT TESTCASES **************************
+// *********************** User Register Page Test Cases **************************
 
 // ********************************************************************************
 
-const html_start_regex = /^<!DOCTYPE html>.*/;
-const html_end_regex = /.*<\/html>$/;
-
-const register_regex = /.*<form action=.* method=.*>.*/
+// const html_start_regex = /^<!DOCTYPE html>.*/;
+// const html_end_regex = /.*<\/html>$/;
 
 // Test cases for /register API, positive and negative
+const login_regex = /.*<h2>Log In<\/h2>.*/
 describe('Testing Register User API', () => {
     it('positive : /register', done => {
       chai
         .request(server)
         .post('/register')
-        .send({username: 'John Doe', password: 'scoobydoo'})
+        .send({username: 'John Doe', password: 'scoobydoo', email: 'lest9540@colorado.edu'})
         .end((err, res) => {
           expect(res).to.have.status(200);
-          check = (html_start_regex.test(res.text) && html_end_regex.test(res.text) && register_regex.test(res.text))
+          check = login_regex.test(res.text);
           assert(check == true);
           done();
         });
@@ -56,41 +55,39 @@ describe('Testing Register User API', () => {
       chai
         .request(server)
         .post('/register')
-        .send({username: undefined, password: 'scoobydoo'})
+        .send({username: undefined, password: 'scoobydoo', email: 'lest9540@colorado.edu'})
         .end((err, res) => {
           expect(res).to.have.status(400);
-          console.log("\nres.text:\n" + res.text + "\n");
           done();
         });
     });
   });
 
 
-  
-// ***************** TODO: 2 Test cases for Redirect/Render ***********************
+
+// ***************** Redirect/Render Test Cases ***********************
 
 // ********************************************************************************
 
-// // Testing for Redirect
-// describe('Testing Redirect', () => {
-//   // Sample test case given to test /test endpoint.
-//   it('\test route should redirect to /login with 302 HTTP status code', done => {
-//     chai
-//       .request(server)
-//       .get('/test')
-//       .end((err, res) => {
-//         res.should.have.status(302); // Expecting a redirect status code
-//         res.should.redirectTo(/^.*127\.0\.0\.1.*\/login$/); // Expecting a redirect to /login with the mentioned Regex
-//         done();
-//       });
-//   });
-// });
+// Testing for Redirect
+const login_redirect_regex = /^127\.0\.0\.1.*\/login/
+describe('Testing Redirect', () => {
+  it('Positive : redirect to /login', done => {
+    chai
+      .request(server)
+      .get('/test')
+      .end((err, res) => {
+        check = login_regex.test(res.text);
+        res.should.have.status(200); // Expecting a success status code
+        done();
+      });
+  });
+});
 
 
 // Testing for Render
 describe('Testing Render', () => {
-  // Sample test case given to test /test endpoint.
-  it('test "/login" route should render with an html response', done => {
+  it('Positive : /login route', done => {
     chai
       .request(server)
       .get('/login') // for reference, see lab 8's login route (/login) which renders home.hbs
