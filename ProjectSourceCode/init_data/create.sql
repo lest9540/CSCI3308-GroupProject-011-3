@@ -10,7 +10,7 @@ DROP TABLE IF EXISTS transactions;
 CREATE TABLE transactions (
     id SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
+    transaction_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     amount DECIMAL(10, 2) NOT NULL,
-    final_balance DECIMAL(10, 2) NOT NULL,
-    transaction_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    final_balance DECIMAL(10, 2) NOT NULL
 );

@@ -159,6 +159,21 @@ app.get('/discover', (req, res) => {
     });
 });
 
+app.get('/banking', async (req, res) => {
+    try{
+      let results = await db.any('SELECT * FROM transactions');
+      res.render('pages/banking', {transactions: results});
+    } catch (error) {
+      console.log(error);
+      res.render('pages/banking', {transactions: []});
+    }
+});
+
+app.post('/addTransaction', (req, res) => {
+  db.none('INSERT INTO transactions(name, transaction_date, amount, final_balance) VALUES($1, $2, $3, $4)', [req.body.transactionName, req.body.transactionDate, req.body.transactionAmount, req.body.finalBalance]);
+  res.redirect('/banking');
+});
+
 app.get('/logout', (req, res) => {
     req.session.destroy();
     res.render('pages/logout.hbs');
