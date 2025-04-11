@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const bcrypt = require('bcryptjs');
 const axios = require('axios');
+const mailgun = require('mailgun.js');
 
 // create `ExpressHandlebars` instance and configure the layouts and partials dir.
 const hbs = handlebars.create({
@@ -65,6 +66,25 @@ const auth = (req, res, next) => {
 };
 
 // API Routes //
+async function sendTestMessage() {
+  const mail = new mailgun(FormData);
+  const mg = mail.client({
+    username: "api",
+    key: process.env.API_KEY || "API_KEY",
+  });
+  try {
+    const data = await mg.messages.create("sandboxa2db92420e4b4b1b985d93f3f2e6d247.mailgun.org", {
+      from: "Leon Steinbach <lest9540@colorado.edu>",
+      to: ["Leon Steinbach <leon.steinbach1@gmail.com>"],
+      subject: "Hello Leon Steinbach",
+      text: "Congratulations Leon Steinbach, you just sent an email with Mailgun! You are truly awesome!",
+    });
+
+    console.log(data); // logs response data
+  } catch (error) {
+    console.log(error); // logs any error
+  }
+}
 
 app.get('/welcome', (req, res) => {
   res.json({status: 'success', message: 'Welcome!'});
@@ -95,7 +115,7 @@ app.post("/login", async (req, res) => {
             if (match) { // found user and password
                 req.session.user = user;
                 req.session.save();
-                res.redirect('/discover');
+                res.redirect('/user');
             }
             else { // found user wrong password
                 res.render('pages/login.hbs')
@@ -106,7 +126,8 @@ app.post("/login", async (req, res) => {
 });
 
 app.get('/register', (req, res) => {
-    res.render('pages/register')
+  res.render('pages/register')
+  // sendTestMessage();
 });
 
 app.post('/register', async (req, res) => {
@@ -136,28 +157,28 @@ app.get('/settings', (req, res) => {
     res.render('pages/settings')
 });
 
-app.get('/discover', (req, res) => {
-    axios({
-        url: `https://app.ticketmaster.com/discovery/v2/events.json`,
-        method: 'GET',
-        dataType: 'json',
-        headers: { 'Accept-Encoding': 'application/json'},
-        params: {
-            apikey: process.env.API_KEY,
-            keyword: 'Muse',
-            size: 10
-        }
-    })
-    .then(results => { 
-        // the results will be displayed on the terminal if the docker containers are running 
-        res.render('pages/discover', {event: results.data._embedded.events});
-        // Send some parameters
-    })
-    .catch(error => { 
-        console.log(error);
-        res.render(400, 'pages/discover', {event: []});
-    });
-});
+// app.get('/discover', (req, res) => {
+//     axios({
+//         url: `https://app.ticketmaster.com/discovery/v2/events.json`,
+//         method: 'GET',
+//         dataType: 'json',
+//         headers: { 'Accept-Encoding': 'application/json'},
+//         params: {
+//             apikey: process.env.API_KEY,
+//             keyword: 'Muse',
+//             size: 10
+//         }
+//     })
+//     .then(results => { 
+//         // the results will be displayed on the terminal if the docker containers are running 
+//         res.render('pages/discover', {event: results.data._embedded.events});
+//         // Send some parameters
+//     })
+//     .catch(error => { 
+//         console.log(error);
+//         res.render(400, 'pages/discover', {event: []});
+//     });
+// });
 
 app.get('/logout', (req, res) => {
     req.session.destroy();
