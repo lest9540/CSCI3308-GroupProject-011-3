@@ -70,19 +70,14 @@
 
             <p style="font-size: 30px"> Vision Statement goes here </p>
 
-            <!--Anchor Points-->
-            <div style="display:flex; gap: 30px;">
-                <a href="#Section1"> Section 1 </a>
-                <a href="#Section2"> Section 2 </a>
-                <a href="#Section3"> Section 3 </a>
-                <a href="#Section4"> Section 4 </a>
-            </div>
+            <!--Image from the web-->
+            <svg xmlns="http://www.w3.org/2000/svg" id="scrollDown" style="cursor: pointer" width="24" height="24"><path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8.009 8.009 0 0 1-8 8z"/><path d="M12 12.586 8.707 9.293l-1.414 1.414L12 15.414l4.707-4.707-1.414-1.414L12 12.586z"/></svg>
+        </div>
 
-            <!--Link to Register and Login-->
-            <div style="display:flex; gap: 30px;">
-                <a href="/register"> Register </a>
-                <a href="/login"> Login </a>
-            </div>
+        <!-- Feature Display Section -->
+        <div class="featureDisplay feature1">
+            <img src="https://placehold.co/300x300"> </img>
+            <h1> Testing text 1</h1>
         </div>
 
         <!-- Feature Display Section -->
@@ -114,4 +109,16 @@
             </div>
         </section>
     </div>
+
+
+    <!--Scripting to arrows to go down-->
+    <script>
+        document.getElementById("scrollDown").addEventListener("click", function() {
+            
+            const down = document.querySelector(".featureDisplay")
+            if (down){
+                down.scrollIntoView({behavior: "smooth"});
+            }
+        });
+    </script>
 </body>
