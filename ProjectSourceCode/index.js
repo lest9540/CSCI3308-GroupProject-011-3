@@ -133,7 +133,8 @@ app.post("/login", async (req, res) => {
 });
 
 app.get('/register', (req, res) => {
-    res.render('pages/register')
+  res.render('pages/register')
+  // sendTestMessage();
 });
 
 app.post('/register', async (req, res) => {
