@@ -1,0 +1,6 @@
+Zoom Link: https://cuboulder.zoom.us/j/91432440899
+
+4/4/2025 -------------
+Make sure that redirect has status 303 on rerouting - Nhan
+Next week will work on transactions and user settings page - George
+Add a pop up that tells you that you don't have an account and then redirects you to the register page - login_page
