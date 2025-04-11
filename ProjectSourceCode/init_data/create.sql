@@ -8,7 +8,7 @@ SELECT * FROM users;
 
 DROP TABLE IF EXISTS transactions;
 CREATE TABLE transactions (
-    id SERIAL PRIMARY KEY,
+    user_id VARCHAR(50) NOT NULL,
     name VARCHAR(50) NOT NULL,
     transaction_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     amount DECIMAL(10, 2) NOT NULL,

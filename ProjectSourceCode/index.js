@@ -8,6 +8,8 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const bcrypt = require('bcryptjs');
 const axios = require('axios');
+var cookieSession = require('cookie-session')
+
 
 // create `ExpressHandlebars` instance and configure the layouts and partials dir.
 const hbs = handlebars.create({
@@ -47,8 +49,10 @@ app.use(
     secret: process.env.SESSION_SECRET,
     saveUninitialized: false,
     resave: false,
+    
   })
 );
+
 
 app.use(
   bodyParser.urlencoded({
@@ -161,7 +165,7 @@ app.get('/discover', (req, res) => {
 
 app.get('/banking', async (req, res) => {
     try{
-      let results = await db.any('SELECT * FROM transactions');
+      let results = await db.any('SELECT * FROM transactions WHERE user_id = $1', [req.session.user[0].username]);
       res.render('pages/banking', {transactions: results});
     } catch (error) {
       console.log(error);
@@ -170,7 +174,7 @@ app.get('/banking', async (req, res) => {
 });
 
 app.post('/addTransaction', (req, res) => {
-  db.none('INSERT INTO transactions(name, transaction_date, amount, final_balance) VALUES($1, $2, $3, $4)', [req.body.transactionName, req.body.transactionDate, req.body.transactionAmount, req.body.finalBalance]);
+  db.none('INSERT INTO transactions(user_id, name, transaction_date, amount, final_balance) VALUES($1, $2, $3, $4, $5)', [req.session.user[0].username, req.body.transactionName, req.body.transactionDate, req.body.transactionAmount, req.body.finalBalance]);
   res.redirect('/banking');
 });
 
