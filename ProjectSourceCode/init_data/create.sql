@@ -4,7 +4,6 @@ CREATE TABLE users (
     password VARCHAR(60) NOT NULL,
     email VARCHAR(100) NOT NULL
 );
-SELECT * FROM users;
 
 DROP TABLE IF EXISTS transactions;
 CREATE TABLE transactions (
