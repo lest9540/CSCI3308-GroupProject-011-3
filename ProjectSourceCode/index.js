@@ -28,6 +28,7 @@ const dbConfig = {
   database: process.env.POSTGRES_DB,
   user: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,
+  email: process.env.POSTGRES_EMAIL,
 };
 
 const db = pgp(dbConfig);
@@ -72,7 +73,7 @@ const auth = (req, res, next) => {
 };
 
 // API Funcs //
-async function sendSimpleMessage() {
+async function sendOptInMessage(name, email) {
   const mailgun = new mail(FormData);
   const mg = mailgun.client({
     username: "api",
@@ -80,10 +81,10 @@ async function sendSimpleMessage() {
   });
   try {
     const data = await mg.messages.create("sandboxa2db92420e4b4b1b985d93f3f2e6d247.mailgun.org", {
-      from: "Mailgun Sandbox <postmaster@sandboxa2db92420e4b4b1b985d93f3f2e6d247.mailgun.org>",
-      to: ["Leon Steinbach <lest9540@colorado.edu>"],
-      subject: "Spell Saver API Test Email",
-      text: "Congratulations Leon Steinbach, you just sent an email with Mailgun! You are truly awesome!",
+      from: "SpellSaver <lest9540@colorado.edu>",
+      to: [name + " <" + email + ">"],
+      subject: "Thank You for Optin In",
+      text: "Congratulations " + name + ",\n\n       You have succesfully opted into regular updates about your budget with SpellSaver.\n       We will be sending you regular updates about your budget.\n\n Thank you for using SpellSaver!",
     });
 
     console.log(data); // logs response data
@@ -106,7 +107,6 @@ app.get('/login', (req, res) => {
 // .get for the front page
 app.get('/front', (req, res) => {
   res.render('pages/front');
-  // sendSimpleMessage();
 });
 
 //---------------------------------------------------------------------------------------------
@@ -122,7 +122,7 @@ app.post("/login", async (req, res) => {
             if (match) { // found user and password
                 req.session.user = user;
                 req.session.save();
-                res.redirect('/banking');
+                res.redirect('/user');
             }
             else { // found user wrong password
                 res.render('pages/login.hbs')
@@ -144,7 +144,7 @@ app.post('/register', async (req, res) => {
     })
     .catch(error => {
       console.log(error);
-      res.redirect(400, '/register');
+      res.redirect('/register');
     });
 });
 
@@ -156,7 +156,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/user', (req, res) => {
-  res.render('pages/user')
+  res.render('pages/user', {user: req.session.user[0], email: req.session.user[0].email});
 });
 
 app.get('/settings', (req, res) => {
