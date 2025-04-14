@@ -108,7 +108,6 @@ app.get('/login', (req, res) => {
 // .get for the front page
 app.get('/front', (req, res) => {
   res.render('pages/front');
-  // sendSimpleMessage();
 });
 
 //---------------------------------------------------------------------------------------------
