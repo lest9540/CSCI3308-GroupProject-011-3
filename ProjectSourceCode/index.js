@@ -108,7 +108,6 @@ app.get('/login', (req, res) => {
 // .get for the front page
 app.get('/front', (req, res) => {
   res.render('pages/front');
-  // sendSimpleMessage();
 });
 
 //---------------------------------------------------------------------------------------------
@@ -124,7 +123,7 @@ app.post("/login", async (req, res) => {
             if (match) { // found user and password
                 req.session.user = user;
                 req.session.save();
-                res.redirect('/banking');
+                res.redirect('/user');
             }
             else { // found user wrong password
                 res.render('pages/login.hbs')
