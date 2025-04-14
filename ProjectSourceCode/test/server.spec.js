@@ -38,6 +38,7 @@ describe('Server!', () => {
 // Test cases for /register API, positive and negative
 let check = undefined;
 const login_regex = /.*Login Page.*/
+const register_regex = /.*Already have an account\?.*/
 describe('Testing Register User API', () => {
     it('positive : /register', done => {
       console.log('before chai');
@@ -52,7 +53,6 @@ describe('Testing Register User API', () => {
           done();
         });
       });
-      console.log('after chai');
 
     it('Negative : /register. Checking invalid name', done => {
       chai
@@ -60,7 +60,9 @@ describe('Testing Register User API', () => {
         .post('/register')
         .send({name: undefined, password: 'DuckTales', email: 'geba6807@colorado.edu'})
         .end((err, res) => {
-          expect(res).to.have.status(400);
+          expect(res).to.have.status(200);
+          check = register_regex.test(res.text);
+          assert(check == true);
           done();
         });
     });
