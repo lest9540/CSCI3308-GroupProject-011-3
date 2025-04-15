@@ -1,3 +1,6 @@
+// import FormData from "form-data"; // form-data v4.0.1
+// import Mailgun from "mailgun.js"; // mailgun.js v11.1.0
+
 const express = require('express');
 const app = express();
 const handlebars = require('express-handlebars');
@@ -8,7 +11,8 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const bcrypt = require('bcryptjs');
 const axios = require('axios');
-const mailgun = require('mailgun.js');
+const nodemailer = require('nodemailer');
+const mail = require('mailgun.js');
 
 // create `ExpressHandlebars` instance and configure the layouts and partials dir.
 const hbs = handlebars.create({
@@ -24,6 +28,7 @@ const dbConfig = {
   database: process.env.POSTGRES_DB,
   user: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,
+  email: process.env.POSTGRES_EMAIL,
 };
 
 const db = pgp(dbConfig);
@@ -65,24 +70,24 @@ const auth = (req, res, next) => {
     next();
 };
 
-// API Routes //
-async function sendTestMessage() {
-  const mail = new mailgun(FormData);
-  const mg = mail.client({
+// API Funcs //
+async function sendOptInMessage(name, email) {
+  const mailgun = new mail(FormData);
+  const mg = mailgun.client({
     username: "api",
     key: process.env.API_KEY || "API_KEY",
   });
   try {
     const data = await mg.messages.create("sandboxa2db92420e4b4b1b985d93f3f2e6d247.mailgun.org", {
-      from: "Leon Steinbach <lest9540@colorado.edu>",
-      to: ["Leon Steinbach <leon.steinbach1@gmail.com>"],
-      subject: "Hello Leon Steinbach",
-      text: "Congratulations Leon Steinbach, you just sent an email with Mailgun! You are truly awesome!",
+      from: "SpellSaver <lest9540@colorado.edu>",
+      to: [name + " <" + email + ">"],
+      subject: "Thank You for Optin In",
+      text: "Congratulations " + name + ",\n\n       You have succesfully opted into regular updates about your budget with SpellSaver.\n       We will be sending you regular updates about your budget.\n\n Thank you for using SpellSaver!",
     });
 
     console.log(data); // logs response data
   } catch (error) {
-    console.log(error); // logs any error
+    console.log(error); //logs any error
   }
 }
 
@@ -126,59 +131,58 @@ app.post("/login", async (req, res) => {
 });
 
 app.get('/register', (req, res) => {
-  res.render('pages/register')
-  // sendTestMessage();
+    res.render('pages/register')
 });
 
 app.post('/register', async (req, res) => {
   const hash = await bcrypt.hash(req.body.password, 10);
-  db.none('INSERT INTO users(username, password, email) VALUES($1, $2, $3)', [req.body.username, hash, req.body.email])
+  db.none('INSERT INTO users(username, password, email) VALUES($1, $2, $3)', [req.body.name, hash, req.body.email])
     .then(() => {
       res.redirect('/login');
     })
     .catch(error => {
       console.log(error);
-      res.redirect(400, '/register');
+      res.redirect('/register');
     });
 });
-
-// Authentication Required past here
-app.use(auth);
 
 app.get('/', (req, res) => {
     res.redirect('/login');
 });
 
-app.get('/user', (req, res) => {
-  res.render('pages/user')
+// Authentication Required past here
+app.use(auth);
+
+app.get('/user', async (req, res) => {
+  res.render('pages/user', {email: req.session.user[0].email, OptIn: req.session.user[0].reminders});
+});
+
+app.post('/user', async (req, res) => {
+  var flag = req.body.EmailOptIn;
+  if (flag == undefined) {
+    flag = false;
+  }
+
+  db.any('UPDATE users SET reminders = $1 WHERE username = $2', [flag, req.session.user[0].username])
+    .then(() => {
+      if (flag) {
+        sendOptInMessage(req.session.user[0].username, req.session.user[0].email);
+      }
+      req.session.user[0].reminders = flag;
+      res.render('pages/user', {email: req.session.user[0].email, OptIn: flag});
+    })
+    .catch(error => {
+      console.log(error);
+      res.render('pages/user', {email: req.session.user[0].email, OptIn: flag});
+    });
+
+    var log = await db.any('SELECT * FROM users WHERE username = $1', [req.session.user[0].username]);
+    console.log(log);
 });
 
 app.get('/settings', (req, res) => {
     res.render('pages/settings')
 });
-
-// app.get('/discover', (req, res) => {
-//     axios({
-//         url: `https://app.ticketmaster.com/discovery/v2/events.json`,
-//         method: 'GET',
-//         dataType: 'json',
-//         headers: { 'Accept-Encoding': 'application/json'},
-//         params: {
-//             apikey: process.env.API_KEY,
-//             keyword: 'Muse',
-//             size: 10
-//         }
-//     })
-//     .then(results => { 
-//         // the results will be displayed on the terminal if the docker containers are running 
-//         res.render('pages/discover', {event: results.data._embedded.events});
-//         // Send some parameters
-//     })
-//     .catch(error => { 
-//         console.log(error);
-//         res.render(400, 'pages/discover', {event: []});
-//     });
-// });
 
 app.get('/logout', (req, res) => {
     req.session.destroy();

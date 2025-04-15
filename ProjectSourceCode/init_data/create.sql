@@ -2,7 +2,8 @@ DROP TABLE IF EXISTS users;
 CREATE TABLE users (
     username VARCHAR(50) PRIMARY KEY,
     password VARCHAR(60) NOT NULL,
-    email VARCHAR(100) NOT NULL
+    email VARCHAR(100) NOT NULL,
+    reminders BOOLEAN NOT NULL DEFAULT FALSE
 );
 SELECT * FROM users;
 
