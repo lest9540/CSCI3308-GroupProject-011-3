@@ -133,8 +133,7 @@ app.post("/login", async (req, res) => {
 });
 
 app.get('/register', (req, res) => {
-  res.render('pages/register')
-  // sendTestMessage();
+    res.render('pages/register')
 });
 
 app.post('/register', async (req, res) => {
@@ -148,9 +147,6 @@ app.post('/register', async (req, res) => {
       res.redirect('/register');
     });
 });
-
-// Authentication Required past here
-app.use(auth);
 
 app.get('/', (req, res) => {
     res.redirect('/login');
