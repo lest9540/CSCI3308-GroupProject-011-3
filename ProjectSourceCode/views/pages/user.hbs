@@ -1,42 +1,5 @@
 <div class="row">
-  <div class="col-sm-6 mb-3 mb-sm-0">
-    <div class="card">
-        <div class="card-header">
-            Your Reminders
-        </div>
-        <div class="card-body">
-            <p class="card-text">email: </p> <!--insert user email or empty string if no email provided-->
-            <!--Switch for whether or not user opts in for notifications-->
-            {{#if OptIn}}
-              <form action="/user" method="POST">
-                <div class="form-check form-switch">
-                  <input class="form-check-input" type="checkbox" role="switch" id="EmailOptIn" name="EmailOptIn" checked>
-                  <label class="form-check-label" for="flexSwitchCheckChecked">Opt Into Regular Email Summaries</label>
-                </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
-              </form>
-            {{else}}
-              <form action="/user" method="POST">
-                <div class="form-check form-switch">
-                  <input class="form-check-input" type="checkbox" role="switch" id="EmailOptIn" name="EmailOptIn">
-                  <label class="form-check-label" for="switchCheckDefault">Opt Into Regular Email Summaries</label>
-                </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
-              </form>
-            {{/if}}
-            <!--Check boxes (if switch on) to determine frequency of emails-->
-        </div>
-    </div>
-  </div>
-  {{!-- <div class="col-sm-6">
-    <div class="card">
-        <div class="card-header">
-            Accessability
-        </div>
-        <div class="card-body">
-            <h5 class="card-title">Themes</h5>
-            <!--Button choices for different page colour themes-->
-        </div>
-    </div>
-  </div> --}}
+  <h2>Greetings {{username}}</h2>
+  <h5>Email: {{email}}</h5>
+  <h5>Notification Status: {{OptIn}}</h5>
 </div>

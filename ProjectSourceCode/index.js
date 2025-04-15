@@ -120,7 +120,7 @@ app.post("/login", async (req, res) => {
             if (match) { // found user and password
                 req.session.user = user;
                 req.session.save();
-                res.redirect('/user');
+                res.redirect('/settings');
             }
             else { // found user wrong password
                 res.render('pages/login.hbs')
@@ -154,13 +154,24 @@ app.get('/', (req, res) => {
 app.use(auth);
 
 app.get('/user', async (req, res) => {
-  res.render('pages/user', {email: req.session.user[0].email, OptIn: req.session.user[0].reminders});
+  var flag = req.session.user[0].reminders;
+  if (flag == undefined) { // default off value is technically undefined
+    flag = false;
+  }
+  res.render('pages/user', {username: req.session.user[0].username, email: req.session.user[0].email, OptIn: flag});
 });
 
-app.post('/user', async (req, res) => {
+app.get('/settings', (req, res) => {
+  res.render('pages/settings');
+});
+
+app.post('/settings', async (req, res) => {
   var flag = req.body.EmailOptIn;
-  if (flag == undefined) {
+  if (flag == undefined) { // default off value is technically undefined
     flag = false;
+  }
+  else if (flag == 'on') {
+    flag = true;
   }
 
   db.any('UPDATE users SET reminders = $1 WHERE username = $2', [flag, req.session.user[0].username])
@@ -169,20 +180,13 @@ app.post('/user', async (req, res) => {
         sendOptInMessage(req.session.user[0].username, req.session.user[0].email);
       }
       req.session.user[0].reminders = flag;
-      res.render('pages/user', {email: req.session.user[0].email, OptIn: flag});
+      res.render('pages/user', {name: req.session.user[0].user, email: req.session.user[0].email, OptIn: flag});
     })
     .catch(error => {
       console.log(error);
-      res.render('pages/user', {email: req.session.user[0].email, OptIn: flag});
+      res.render('pages/user', {name: req.session.user[0].user, email: req.session.user[0].email, OptIn: flag});
     });
-
-    var log = await db.any('SELECT * FROM users WHERE username = $1', [req.session.user[0].username]);
-    console.log(log);
-});
-
-app.get('/settings', (req, res) => {
-    res.render('pages/settings')
-});
+  });
 
 app.get('/logout', (req, res) => {
     req.session.destroy();

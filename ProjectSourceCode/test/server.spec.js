@@ -32,11 +32,8 @@ describe('Server!', () => {
 
 // ********************************************************************************
 
-// const html_start_regex = /^<!DOCTYPE html>.*/;
-// const html_end_regex = /.*<\/html>$/;
-
-// Test cases for /register API, positive and negative
 const login_regex = /.*Login Page.*/
+const register_regex = /.*Already have an account\?.*/
 describe('Testing Register User API', () => {
     it('positive : /register', done => {
       chai
@@ -45,6 +42,7 @@ describe('Testing Register User API', () => {
         .send({user: 'John Doe', password: 'scoobydoo', email: 'lest9540@colorado.edu'})
         .end((err, res) => {          
           expect(res).to.have.status(200);
+          console.log(res.text);
           // check = login_regex.test(res.text);
           // assert(check == true);
           done();
@@ -58,6 +56,8 @@ describe('Testing Register User API', () => {
         .send({username: undefined, password: 'ducktales', email: 'gunkfar'})
         .end((err, res) => {
           expect(res).to.have.status(200);
+          check = register_regex.test(res.text);
+          assert(check == true);
           done();
         });
     });
