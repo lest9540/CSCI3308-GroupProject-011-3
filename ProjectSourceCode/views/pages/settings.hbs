@@ -10,12 +10,56 @@
   </li>
 </ul>
 <div class="tab-content mt-3" id="settingsTabsContent">
+
   <div class="tab-pane fade show active" id="display" role="tabpanel" aria-labelledby="display-tab">
     <!-- TODO: Add form for display settings -->
   </div>
+
   <div class="tab-pane fade" id="notifications" role="tabpanel" aria-labelledby="notifications-tab">
-    <!-- TODO: Add form for notification settings -->
+    <div class="row">
+      <div class="col-sm-6 mb-3 mb-sm-0">
+        <div class="card">
+            <div class="card-header">
+                Your Reminders
+            </div>
+            <div class="card-body">
+                <p class="card-text">email: </p> <!--insert user email or empty string if no email provided-->
+                <!--Switch for whether or not user opts in for notifications-->
+                {{#if OptIn}}
+                  <form action="/settings" method="POST">
+                    <div class="form-check form-switch">
+                      <input class="form-check-input" type="checkbox" role="switch" id="EmailOptIn" name="EmailOptIn" checked>
+                      <label class="form-check-label" for="flexSwitchCheckChecked">Opt Into Regular Email Summaries</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                  </form>
+                {{else}}
+                  <form action="/settings" method="POST">
+                    <div class="form-check form-switch">
+                      <input class="form-check-input" type="checkbox" role="switch" id="EmailOptIn" name="EmailOptIn">
+                      <label class="form-check-label" for="switchCheckDefault">Opt Into Regular Email Summaries</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                  </form>
+                {{/if}}
+                <!--Check boxes (if switch on) to determine frequency of emails-->
+            </div>
+        </div>
+      </div>
+      {{!-- <div class="col-sm-6">
+        <div class="card">
+            <div class="card-header">
+                Accessability
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Themes</h5>
+                <!--Button choices for different page colour themes-->
+            </div>
+        </div>
+      </div> --}}
+    </div>
   </div>
+
   <div class="tab-pane fade" id="account" role="tabpanel" aria-labelledby="account-tab">
     <!-- TODO: Add form for account settings -->
   </div>
