@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    {{!-- Calendar Arrows--}}
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+        integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
+    />
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        #calendar {
+            width: 300px;
+            margin: 20px auto;
+        }
+
+        .monthTitle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .days, .dates {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+        }
+
+        .day, .date {
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+
+        .today {
+            background-color: #007bff;
+            color: white;
+            border-radius: 50%;
+        }
+
+        .rightHalf {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 50%;
+            height: 150vh; /*change this later to 100vh -> JUST HERE FOR TEMP FORMATING*/
+            display: flex;
+            justify-content: flex-start; 
+            align-items: center; 
+        }
+        </style>
+    </head>
+
+        <body>
+            <div class = "rightHalf"> {{!-- Shifts the calendar to be on the right side of the screen--}}
+                <div id="calendar">
+                    {{!-- Display of the Month and Year --}}
+                    <div class="monthTitle">
+                        <i class = "fa fa-angle-left prev" onclick="changeMonth(-1)"></i> {{!-- Using calendar arrows --}}
+                        <h2 id="monthYear"></h2>
+                        <i class = "fa fa-angle-right next" onclick="changeMonth(1)"></i> {{!-- Using calendar arrows --}}
+                    </div>
+
+                    {{!-- Buttons for Today and Adding an Event (TEMP) --}}
+                    <div>
+                        <button>Today</button>
+                        <button style="margin-left: 100px; margin-bottom: 10px;">Add Transaction</button>
+                    </div>
+
+                    {{!-- FIX THE STYLE SO THAT CAN DISPLAY 3 CHARS INSTEAD OF 1-2--}}
+                    <div class="days">
+                        <div class="day">S</div><div class="day">M</div><div class="day">T</div>
+                        <div class="day">W</div><div class="day">Th</div><div class="day">F</div>
+                        <div class="day">Sa</div>
+                    </div>
+
+                    <div class="dates" id="dates"></div>
+                </div>
+
+                {{!-- Functions to get the current date and set the calendar up --}}
+                <script>
+                    let currentDate = new Date();
+
+                    function renderCalendar(date) {
+                        // Gets current date
+                        const year = date.getFullYear();
+                        const month = date.getMonth();
+                        const firstDay = new Date(year, month, 1).getDay();
+                        const lastDate = new Date(year, month + 1, 0).getDate();
+                        const today = new Date();
+
+                        document.getElementById("monthYear").innerText =
+                        date.toLocaleString("default", { month: "long" }) + " " + year;
+
+                        const datesEl = document.getElementById("dates");
+                        datesEl.innerHTML = "";
+
+                        // Add empty cells for days before the first of the month
+                        for (let i = 0; i < firstDay; i++) {
+                        datesEl.innerHTML += `<div class="date"></div>`;
+                        }
+
+                        // Add empty cells for the days after the first of the month
+                        // COME BACK TO THIS ONE ! ! !! ! !  !! ! ! ! ! !
+
+                        // Add day numbers to the calendar (1, 2, 3, ...)
+                        for (let day = 1; day <= lastDate; day++) {
+                            const isToday =
+                                day === today.getDate() &&
+                                month === today.getMonth() &&
+                                year === today.getFullYear();
+
+                            datesEl.innerHTML += `<div class="date ${isToday ? 'today' : ''}">${day}</div>`;
+                        }
+                    }
+
+                    function changeMonth(offset) {
+                        currentDate.setMonth(currentDate.getMonth() + offset);
+                        renderCalendar(currentDate);
+                    }
+
+                    renderCalendar(currentDate);
+                </script>
+            </div>
+        </body>
+</html>
