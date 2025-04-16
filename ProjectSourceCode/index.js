@@ -53,8 +53,10 @@ app.use(
     secret: process.env.SESSION_SECRET,
     saveUninitialized: false,
     resave: false,
+    
   })
 );
+
 
 app.use(
   bodyParser.urlencoded({
@@ -159,6 +161,44 @@ app.get('/user', (req, res) => {
 
 app.get('/settings', (req, res) => {
     res.render('pages/settings')
+});
+
+// app.get('/discover', (req, res) => {
+//     axios({
+//         url: `https://app.ticketmaster.com/discovery/v2/events.json`,
+//         method: 'GET',
+//         dataType: 'json',
+//         headers: { 'Accept-Encoding': 'application/json'},
+//         params: {
+//             apikey: process.env.API_KEY,
+//             keyword: 'Muse',
+//             size: 10
+//         }
+//     })
+//     .then(results => { 
+//         // the results will be displayed on the terminal if the docker containers are running 
+//         res.render('pages/discover', {event: results.data._embedded.events});
+//         // Send some parameters
+//     })
+//     .catch(error => { 
+//         console.log(error);
+//         res.render(400, 'pages/discover', {event: []});
+//     });
+// });
+
+app.get('/banking', async (req, res) => {
+    try{
+      let results = await db.any('SELECT * FROM transactions WHERE user_id = $1', [req.session.user[0].username]);
+      res.render('pages/banking', {transactions: results});
+    } catch (error) {
+      console.log(error);
+      res.render('pages/banking', {transactions: []});
+    }
+});
+
+app.post('/addTransaction', (req, res) => {
+  db.none('INSERT INTO transactions(user_id, name, transaction_date, amount, final_balance) VALUES($1, $2, $3, $4, $5)', [req.session.user[0].username, req.body.transactionName, req.body.transactionDate, req.body.transactionAmount, req.body.finalBalance]);
+  res.redirect('/banking');
 });
 
 app.get('/logout', (req, res) => {
