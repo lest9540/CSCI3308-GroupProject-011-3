@@ -99,7 +99,7 @@ app.post("/login", async (req, res) => {
             if (match) { // found user and password
                 req.session.user = user;
                 req.session.save();
-                res.redirect('/discover');
+                res.redirect('/banking');
             }
             else { // found user wrong password
                 res.render('pages/login.hbs')
