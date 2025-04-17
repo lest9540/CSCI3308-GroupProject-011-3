@@ -29,6 +29,7 @@ const dbConfig = {
   user: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,
   email: process.env.POSTGRES_EMAIL,
+  reminders: process.env.POSTGRES_REMINDERS,
 };
 
 const db = pgp(dbConfig);
@@ -164,7 +165,7 @@ app.get('/user', async (req, res) => {
 });
 
 app.get('/settings', (req, res) => {
-  res.render('pages/settings');
+  res.render('pages/settings', {OptIn: req.session.user[0].reminders});
 });
 
 app.post('/settings', async (req, res) => {
