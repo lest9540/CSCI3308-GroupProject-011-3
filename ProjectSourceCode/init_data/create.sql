@@ -10,7 +10,8 @@ DROP TABLE IF EXISTS transactions;
 CREATE TABLE transactions (
     user_id VARCHAR(50) NOT NULL,
     name VARCHAR(50) NOT NULL,
-    transaction_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    category VARCHAR(50) NOT NULL,
+    transaction_date VARCHAR(10) NOT NULL,
     amount DECIMAL(10, 2) NOT NULL,
     final_balance DECIMAL(10, 2) NOT NULL
 );
