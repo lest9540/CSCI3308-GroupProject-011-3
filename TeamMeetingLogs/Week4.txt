@@ -1,0 +1,26 @@
+Zoom Link: https://cuboulder.zoom.us/j/91432440899
+
+4/18/2025 -------------
+Leon: Doing some clean up stuff on tests, and did most of the implementation for the emails
+a. Just needs to add the reminders
+
+George: Working on the transaction history. 
+a. Added set categories for transactions
+b. Currently added a set budget that gets subtracted from each transactions (should be able to update this and automatically deduct form it)
+
+Nhan: Was tweaking on the settings for the front page -> added anchor points 
+a. Added a pie chart 
+b. Can customize this 
+c. Add a second chart that is based on the transactions
+Do you intend to have a graphical interface: Yes
+
+Trinity: Worked on the calendar and fixed a few minor issues with the login and log out page
+a. Will work on showing the transactions due on each date with the calendar 
+b. Also work on styling later too
+
+Questions -------------
+Email Main Thread
+Process.nexttick in node.js
+a. Will keep running it every time -> have a while loop
+
+Also a library called worker threads
