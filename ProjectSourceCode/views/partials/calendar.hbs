@@ -51,12 +51,29 @@
         .rightHalf {
             position: absolute;
             top: 0;
-            left: 50%;
+            left: 53%;
             width: 50%;
             height: 130vh; /*change this later to 100vh -> JUST HERE FOR TEMP FORMATING*/
             display: flex;
             justify-content: flex-start; 
             align-items: center; 
+        }
+
+        .menu {
+            width: 750px;
+            right: 50%;
+            margin-top: 7vh; /*change this later to 100vh -> JUST HERE FOR TEMP FORMATING*/
+            min-height: 550px;
+            margin-left: 120px;
+            color: #fff;
+            display: flex;
+
+            border-radius: 10px;
+            background-color: #8b8e9b;
+        }
+
+        .text {
+
         }
         </style>
     </head>
@@ -128,6 +145,10 @@
 
                     renderCalendar(currentDate);
                 </script>
+            </div>
+{{!-- Show Transactions Side---}}
+            <div class="menu"> 
+                <h3 style="margin-left: 20px; margin-top: 20px">Temp Transactions</h3> {{!-- CHANGE THIS TO DISPLAY THE DATE INSTEAD --}}
             </div>
         </body>
 </html>
