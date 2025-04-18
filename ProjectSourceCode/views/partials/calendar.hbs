@@ -53,7 +53,7 @@
             top: 0;
             left: 50%;
             width: 50%;
-            height: 150vh; /*change this later to 100vh -> JUST HERE FOR TEMP FORMATING*/
+            height: 130vh; /*change this later to 100vh -> JUST HERE FOR TEMP FORMATING*/
             display: flex;
             justify-content: flex-start; 
             align-items: center; 
@@ -71,7 +71,7 @@
                         <i class = "fa fa-angle-right next" onclick="changeMonth(1)"></i> {{!-- Using calendar arrows --}}
                     </div>
 
-                    {{!-- Buttons for Today and Adding an Event (TEMP) --}}
+                    {{!-- Buttons for Today and Adding an Event (TEMP ! ! ! ! ! ! ! ! !) --}}
                     <div>
                         <button>Today</button>
                         <button style="margin-left: 100px; margin-bottom: 10px;">Add Transaction</button>
@@ -110,9 +110,6 @@
                         datesEl.innerHTML += `<div class="date"></div>`;
                         }
 
-                        // Add empty cells for the days after the first of the month
-                        // COME BACK TO THIS ONE ! ! !! ! !  !! ! ! ! ! !
-
                         // Add day numbers to the calendar (1, 2, 3, ...)
                         for (let day = 1; day <= lastDate; day++) {
                             const isToday =
@@ -123,7 +120,7 @@
                             datesEl.innerHTML += `<div class="date ${isToday ? 'today' : ''}">${day}</div>`;
                         }
                     }
-
+                    // Changes the corresponding day to match the first day of the month (if it starts on monday, tuesday, etc.)
                     function changeMonth(offset) {
                         currentDate.setMonth(currentDate.getMonth() + offset);
                         renderCalendar(currentDate);
