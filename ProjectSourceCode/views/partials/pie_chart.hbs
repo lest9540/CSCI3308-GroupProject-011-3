@@ -15,14 +15,7 @@
             border: 1px solid;
             border-color: rgb(107, 107, 107);
             margin: auto;
-            background: 
-                conic-gradient(
-                    #e74e4e 0% 30%,
-                    #f68849 30% 40%,
-                    #70ed78 40% 65%,
-                    #a853e9 65% 95%,
-                    #4881ed 95% 100%
-                );
+            background-color: gray;
         }
 
         .buttonContainer{
@@ -83,13 +76,7 @@
                         <div class="mb-3">
                             <label for="pieChartCategory4" class="form-label">Category 4</label>
                             <input type="number" class="form-control" id="category4Percentage" placeholder="Enter percentage">
-                            <input type="color" class="form-control form-control-color" id="category4Color" value="#a853e9" title="Choose your color">
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="pieChartCategory5" class="form-label">Category 5</label>
-                            <input type="number" class="form-control" id="category5Percentage" placeholder="Enter percentage">
-                            <input type="color" class="form-control form-control-color" id="category5Color" value="#4881ed" title="Choose your color">
+                            <input type="color" class="form-control form-control-color" id="category4Color" value="#4881ed" title="Choose your color">
                         </div>
                     </form>
                 </div>
@@ -97,11 +84,64 @@
                 <!--Modal Footer-->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-primary" onclick="updatePieChart()" data-bs-dismiss="modal">Save changes</button>
                 </div>
             </div>
         </div>
     </div>
+
+    <!--Script-->
+    <script>
+
+        // Updating Piechart function
+        function updatePieChart(){
+            // Storing percantages of each category in a list
+            const percentageList = [
+                parseFloat(document.getElementById("category1Percentage").value) || 0,
+                parseFloat(document.getElementById("category2Percentage").value) || 0,
+                parseFloat(document.getElementById("category3Percentage").value) || 0,
+                parseFloat(document.getElementById("category4Percentage").value) || 0,
+            ];
+
+            // Storing the colors for each category
+            const colorList = [
+                document.getElementById("category1Color").value || 0,
+                document.getElementById("category2Color").value || 0,
+                document.getElementById("category3Color").value || 0,
+                document.getElementById("category4Color").value || 0,
+            ];
+
+            // Checking total percent values to make sure its between 0 and 100
+            // NOTE: Using Principles of Programming concepts, 'let' is used to just set the scope to here
+            let total = 0;
+            for(let listPercentValue of percentageList) {
+                total += listPercentValue;
+            }
+
+            if(total > 100 || total == 0){
+                return
+            }
+
+            // For loop to fill in the gradient
+            let gradientCommands = "";
+            let percentAccumulator = 0;
+            let percentageListLength = percentageList.length;
+
+            for(let i = 0; i < percentageListLength; i++){
+                let start = (percentAccumulator / total) * 100;
+                percentAccumulator += percentageList[i]
+                let end = (percentAccumulator / total) * 100;
+
+                // Concats commands into a single variable
+                gradientCommands += `${colorList[i]} ${start}% ${end}%,`;
+            }
+
+            // Updating .piechart conic gradient
+            document.querySelector(".pieChart").style.background = `conic-gradient(${gradientCommands.slice(0, -1)})`;
+        }
+
+
+    </script>
 
 </body>
 </html>
