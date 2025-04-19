@@ -26,6 +26,7 @@
         }
 
         .monthTitle {
+            margin-top: 50px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -53,7 +54,7 @@
             top: 0;
             left: 53%;
             width: 50%;
-            height: 130vh; /*change this later to 100vh -> JUST HERE FOR TEMP FORMATING*/
+            height: 130vh;
             display: flex;
             justify-content: flex-start; 
             align-items: center; 
@@ -62,7 +63,7 @@
         .menu {
             width: 750px;
             right: 50%;
-            margin-top: 7vh; /*change this later to 100vh -> JUST HERE FOR TEMP FORMATING*/
+            margin-top: 7vh;
             min-height: 550px;
             margin-left: 120px;
             color: #fff;
@@ -72,83 +73,134 @@
             background-color: #8b8e9b;
         }
 
-        .text {
-
+        .date.selected {
+            background-color: #a4c8ff;
+            color: white;
+            border-radius: 50%;
         }
         </style>
     </head>
 
-        <body>
-            <div class = "rightHalf"> {{!-- Shifts the calendar to be on the right side of the screen--}}
-                <div id="calendar">
-                    {{!-- Display of the Month and Year --}}
-                    <div class="monthTitle">
-                        <i class = "fa fa-angle-left prev" onclick="changeMonth(-1)"></i> {{!-- Using calendar arrows --}}
-                        <h2 id="monthYear"></h2>
-                        <i class = "fa fa-angle-right next" onclick="changeMonth(1)"></i> {{!-- Using calendar arrows --}}
-                    </div>
-
-                    {{!-- Buttons for Today and Adding an Event (TEMP ! ! ! ! ! ! ! ! !) --}}
-                    <div>
-                        <button>Today</button>
-                        <button style="margin-left: 100px; margin-bottom: 10px;">Add Transaction</button>
-                    </div>
-
-                    {{!-- FIX THE STYLE SO THAT CAN DISPLAY 3 CHARS INSTEAD OF 1-2--}}
-                    <div class="days">
-                        <div class="day">S</div><div class="day">M</div><div class="day">T</div>
-                        <div class="day">W</div><div class="day">Th</div><div class="day">F</div>
-                        <div class="day">Sa</div>
-                    </div>
-
-                    <div class="dates" id="dates"></div>
+    <body>
+        <div class = "rightHalf"> {{!-- Shifts the calendar to be on the right side of the screen--}}
+            <div id="calendar">
+                {{!-- Display of the Month and Year --}}
+                <div class="monthTitle">
+                    {{!-- Note the fa fa-angle stuff is using the linked style for the arrows on the calendar  --}}
+                    <i class = "fa fa-angle-left prev" onclick="changeMonth(-1)"></i> {{!-- Using calendar arrows --}}
+                    <h2 id="monthYear"></h2>
+                    <i class = "fa fa-angle-right next" onclick="changeMonth(1)"></i> {{!-- Using calendar arrows --}}
                 </div>
 
-                {{!-- Functions to get the current date and set the calendar up --}}
-                <script>
-                    let currentDate = new Date();
+                {{!-- Buttons for Today and Adding an Event (TEMP ! ! ! ! ! ! ! ! !) --}}
+                <div>
+                    <button onclick="todayBut()" class="btn btn-primary" style="margin-right: 250px; margin-bottom: 10px">Today</button>
+                    {{!-- <button style="margin-left: 90px; margin-bottom: 10px;">Add Transaction</button> --}}
+                </div>
 
-                    function renderCalendar(date) {
-                        // Gets current date
-                        const year = date.getFullYear();
-                        const month = date.getMonth();
-                        const firstDay = new Date(year, month, 1).getDay();
-                        const lastDate = new Date(year, month + 1, 0).getDate();
-                        const today = new Date();
+                {{!-- For the Days of the week for calendar --}}
+                <div class="days">
+                    <div class="day">S</div><div class="day">M</div><div class="day">T</div>
+                    <div class="day">W</div><div class="day">Th</div><div class="day">F</div>
+                    <div class="day">Sa</div>
+                </div>
 
-                        document.getElementById("monthYear").innerText =
-                        date.toLocaleString("default", { month: "long" }) + " " + year;
+                <div class="dates" id="dates"></div>
+            </div>
 
-                        const datesEl = document.getElementById("dates");
-                        datesEl.innerHTML = "";
+            {{!-- Functions to get the current date and set the calendar up, etc. --}}
+            <script>
+                let currentDate = new Date();
+                let selectedDay = null; // used for a selected date
 
-                        // Add empty cells for days before the first of the month
-                        for (let i = 0; i < firstDay; i++) {
-                        datesEl.innerHTML += `<div class="date"></div>`;
-                        }
+                function renderCalendar(date) {
+                    // Gets sets up the calendar for the month
+                    const year = date.getFullYear();
+                    const month = date.getMonth();
+                    const firstDay = new Date(year, month, 1).getDay();
+                    const lastDate = new Date(year, month + 1, 0).getDate();
+                    const today = new Date();
 
-                        // Add day numbers to the calendar (1, 2, 3, ...)
-                        for (let day = 1; day <= lastDate; day++) {
-                            const isToday =
-                                day === today.getDate() &&
-                                month === today.getMonth() &&
-                                year === today.getFullYear();
+                    document.getElementById("monthYear").innerText =
+                    date.toLocaleString("default", { month: "long" }) + " " + year;
 
-                            datesEl.innerHTML += `<div class="date ${isToday ? 'today' : ''}">${day}</div>`;
-                        }
+                    const datesEl = document.getElementById("dates");
+                    datesEl.innerHTML = "";
+
+                    // Add empty cells for days before the first of the month
+                    for (let i = 0; i < firstDay; i++) {
+                    datesEl.innerHTML += `<div class="date"></div>`;
                     }
-                    // Changes the corresponding day to match the first day of the month (if it starts on monday, tuesday, etc.)
-                    function changeMonth(offset) {
-                        currentDate.setMonth(currentDate.getMonth() + offset);
-                        renderCalendar(currentDate);
-                    }
 
+                    // Add day numbers to the calendar (1, 2, 3, ...)
+                    for (let day = 1; day <= lastDate; day++) {
+                        const selectDay = new Date(year, month, day);
+
+                        // Holds todays date
+                        const isToday =
+                            day === today.getDate() &&
+                            month === today.getMonth() &&
+                            year === today.getFullYear();
+                        
+                        // Holds the selected day the user clicks on
+                        const isSelected =
+                            selectedDay &&
+                            day === selectedDay.getDate() &&
+                            month === selectedDay.getMonth() &&
+                            year === selectedDay.getFullYear();
+
+                        // Settings to show the day selected
+                        const dayDiv = document.createElement("div");
+                        dayDiv.className = "date" + (isToday ? " today" : "") + (isSelected ? " selected" : ""); // changes to show the selected day variables used before
+                        dayDiv.textContent = day; // makes sure that the day is still visible 
+
+                        // For when the user clicks on a day on the calendar
+                        dayDiv.addEventListener("click", () => {
+                            selectedDay = selectDay;
+                            renderCalendar(currentDate);
+                            showSelectedDay();
+                        });
+                        datesEl.appendChild(dayDiv);
+                    }
+                }
+                // Changes the corresponding day to match the first day of the month (if it starts on monday, tuesday, etc.)
+                function changeMonth(offset) {
+                    currentDate.setMonth(currentDate.getMonth() + offset);
                     renderCalendar(currentDate);
-                </script>
-            </div>
-{{!-- Show Transactions Side---}}
-            <div class="menu"> 
-                <h3 style="margin-left: 20px; margin-top: 20px">Temp Transactions</h3> {{!-- CHANGE THIS TO DISPLAY THE DATE INSTEAD --}}
-            </div>
-        </body>
+                }
+
+                renderCalendar(currentDate);
+
+                // Function that automatically selects todays date and shows transactions due "today"
+                function todayBut(){
+                    currentDate = new Date();
+                    selectedDay = new Date();
+                    renderCalendar(currentDate);
+                    showSelectedDay();
+                }
+
+                // Changes the transactions due to match the date that the user has selected
+                function showSelectedDay() {
+                    const display = document.querySelector(".menu h3"); // heading from the transaction menu
+                    if (selectedDay) {
+                        const formatted = selectedDay.toLocaleDateString("default", {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        });
+                        display.textContent = formatted;
+                    }
+                }
+            </script>
+        </div>
+
+        {{!-- Show Transactions Side --}}
+        <div class="menu"> 
+            <h3 style="margin-left: 20px; margin-top: 20px">Transactions Due</h3>
+            <div><h3 style="margin-left: 10%; margin-top: 50%"> Nothing selected yet </h3></div> {{!-- Add way so this goes away when selecting a day--}}
+            {{!-- Add implementation for showing the transactions due on that day --}}
+        </div>
+
+    </body>
 </html>
