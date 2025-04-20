@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    {{!-- Calendar Arrows--}}
+    {{!-- Calendar Arrows --}}
     <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
@@ -36,6 +36,7 @@
         .days, .dates {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
+            /*If I dont have time add background color in order to make the calendar readable */
         }
 
         .day, .date {
@@ -61,16 +62,20 @@
         }
 
         .menu {
-            width: 750px;
+            width: 1120px; /*TEST: original size 750*/
             right: 50%;
-            margin-top: 7vh;
+            margin-top: 3vh; /* TEST ORIGINAL 7vh*/
             min-height: 550px;
             margin-left: 120px;
             color: #fff;
             display: flex;
 
             border-radius: 10px;
-            background-color: #8b8e9b;
+            background-color: #f4f4f4;
+        }
+
+        .menuText {
+            color: black;
         }
 
         .date.selected {
@@ -113,6 +118,7 @@
                 let currentDate = new Date();
                 let selectedDay = null; // used for a selected date
 
+                // Used to basically reload the calendar with updated changes -> today date, users picking a date, changing month, etc.
                 function renderCalendar(date) {
                     // Gets sets up the calendar for the month
                     const year = date.getFullYear();
@@ -168,7 +174,6 @@
                     currentDate.setMonth(currentDate.getMonth() + offset);
                     renderCalendar(currentDate);
                 }
-
                 renderCalendar(currentDate);
 
                 // Function that automatically selects todays date and shows transactions due "today"
@@ -176,7 +181,7 @@
                     currentDate = new Date();
                     selectedDay = new Date();
                     renderCalendar(currentDate);
-                    showSelectedDay();
+                    showSelectedDay(); // changes the day on the menu left of the calendar
                 }
 
                 // Changes the transactions due to match the date that the user has selected
@@ -197,8 +202,8 @@
 
         {{!-- Show Transactions Side --}}
         <div class="menu"> 
-            <h3 style="margin-left: 20px; margin-top: 20px">Transactions Due</h3>
-            <div><h3 style="margin-left: 10%; margin-top: 50%"> Nothing selected yet </h3></div> {{!-- Add way so this goes away when selecting a day--}}
+            <h3 class = "menuText" style="margin-left: 20px; margin-top: 20px;">Transactions Due</h3>
+            <div><h3 class = "menuText" style="margin-left: 10%; margin-top: 50%"> Nothing selected yet </h3></div> {{!-- Add way so this goes away when selecting a day--}}
             {{!-- Add implementation for showing the transactions due on that day --}}
         </div>
 
