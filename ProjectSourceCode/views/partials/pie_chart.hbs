@@ -122,6 +122,12 @@
                 return
             }
 
+            // Storing data as local
+            localStorage.setItem("plannerPieChartData", JSON.stringify({
+                percentageListData: percentageList,
+                colorListData: colorList
+            }));
+
             // For loop to fill in the gradient
             let gradientCommands = "";
             let percentAccumulator = 0;
@@ -140,6 +146,31 @@
             document.querySelector(".pieChart").style.background = `conic-gradient(${gradientCommands.slice(0, -1)})`;
         }
 
+
+        // Function for loading piechart data
+        document.addEventListener("DOMContentLoaded", function(){
+
+            let storedPieChartData = localStorage.getItem("plannerPieChartData")
+
+            if(storedPieChartData !== null)
+            {
+                // Parsing the stored data
+                let extractedData = JSON.parse(storedPieChartData);
+                
+                document.getElementById("category1Percentage").value = extractedData.percentageListData[0] || 0;
+                document.getElementById("category2Percentage").value = extractedData.percentageListData[1] || 0;
+                document.getElementById("category3Percentage").value = extractedData.percentageListData[2] || 0;
+                document.getElementById("category4Percentage").value = extractedData.percentageListData[3] || 0;
+
+                document.getElementById("category1Color").value = extractedData.colorListData[0] || 0;
+                document.getElementById("category2Color").value = extractedData.colorListData[1] || 0;
+                document.getElementById("category3Color").value = extractedData.colorListData[2] || 0;
+                document.getElementById("category4Color").value = extractedData.colorListData[3] || 0;
+
+                updatePieChart();
+                
+            }
+        });
 
     </script>
 
