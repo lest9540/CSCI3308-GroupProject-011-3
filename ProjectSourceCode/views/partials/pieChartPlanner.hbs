@@ -18,13 +18,34 @@
             background-color: gray;
         }
  
-         .buttonContainer{
-             margin-bottom: 50px;
-         }
+        .buttonContainer{
+            margin-bottom: 50px;
+        }
+
+        .legendContainer{
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .legendItem{
+            display: flex;
+            align-items: center;
+            margin-right: 5px;
+        }
+
+        .legendColor{
+            width: 15px;
+            height: 15px;
+            margin-right: 5px;
+            border-radius: 100%;
+        }
  
      </style>
  </head>
  <body>
+
+    <!--General section on the banking page-->
     <div class="container mt-5">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
@@ -35,6 +56,32 @@
             <div class="card-body">
                 <!--Piechart Visuals-->
                 <div class = "pieChart"></div>
+
+                <div class = "legendContainer" id="plannerPieChartLegend"> 
+                    <div class="legendItem">
+                        <div class="legendColor"></div>
+                        <div class="legendColor" style="background-color: #e74e4e;"></div>
+                        <span id="recurringLegend">Recurring Expenses: 0%</span>
+                    </div>
+
+                    <div class="legendItem">
+                        <div class="legendColor"></div>
+                        <div class="legendColor" style="background-color: #f68849;"></div>
+                        <span id="groceryLegend">Groceries: 0%</span>
+                    </div>
+
+                    <div class="legendItem">
+                        <div class="legendColor"></div>
+                        <div class="legendColor" style="background-color: #70ed78;"></div>
+                        <span id="personalLegend">Personal Expenses: 0%</span>
+                    </div>
+
+                    <div class="legendItem">
+                        <div class="legendColor"></div>
+                        <div class="legendColor" style="background-color: #4881ed;"></div>
+                        <span id="miscellaneousLegend">Miscellaneous: 0%</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -105,11 +152,7 @@
              const colorList = ["#e74e4e", "#f68849", "#70ed78", "#4881ed"];
  
              // Checking total percent values to make sure its between 0 and 100
-             // NOTE: Using Principles of Programming concepts, 'let' is used to just set the scope to here
-             let total = 0;
-             for(let listPercentValue of percentageList) {
-                 total += listPercentValue;
-             }
+             let total = percentageList[0] + percentageList[1] + percentageList[2] + percentageList[3];
  
              if(total > 100 || total == 0){
                  return
@@ -143,7 +186,20 @@
  
              // Updating .piechart conic gradient
              document.querySelector(".pieChart").style.background = `conic-gradient(${gradientCommands.slice(0, -1)})`;
+
+             // Updating the legend
+             updateLegend(percentageList);
          }
+
+
+        // Function for updating the legend's percentages
+        function updateLegend(percentageList){
+            document.getElementById("recurringLegend").textContent = `Recurring Expenses: ${percentageList[0]}%`;   
+            document.getElementById("groceryLegend").textContent = `Groceries: ${percentageList[1]}%`; 
+            document.getElementById("personalLegend").textContent = `Personal Expenses: ${percentageList[2]}%`; 
+            document.getElementById("miscellaneousLegend").textContent = `Miscellaneous: ${percentageList[3]}%`; 
+        }
+
 
         // Event script when the window is loaded, update the piechart to what the user has saved, leave empty otherwise
         window.onload = async () => {
