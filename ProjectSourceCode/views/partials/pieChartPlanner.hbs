@@ -48,7 +48,7 @@
  
                  <!--Modal Header-->
                  <div class="modal-header">
-                     <h1 class="modal-title fs-5">Modal title</h1>
+                     <h1 class="modal-title fs-5">Make your Piechart</h1>
                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                  </div>
  
@@ -56,27 +56,27 @@
                  <div class="modal-body">
                      <form id = "pieChartCategories">
                          <div class="mb-3">
-                             <label for="pieChartCategory1" class="form-label">Category 1</label>
-                             <input type="number" class="form-control" id="category1Percentage" placeholder="Enter percentage">
-                             <input type="color" class="form-control form-control-color" id="category1Color" value="#e74e4e" title="Choose your color">
+                             <label for="pieChartCategory1" class="form-label">Recurring Expense</label>
+                             <input type="number" class="form-control" id="recurringPercentage" placeholder="Enter percentage">
+                             <input type="color" class="form-control form-control-color" id="reccuringColor" value="#e74e4e" title="Choose your color">
                          </div>
  
                          <div class="mb-3">
-                             <label for="pieChartCategory2" class="form-label">Category 2</label>
-                             <input type="number" class="form-control" id="category2Percentage" placeholder="Enter percentage">
-                             <input type="color" class="form-control form-control-color" id="category2Color" value="#f68849" title="Choose your color">
+                             <label for="pieChartCategory2" class="form-label">Groceries</label>
+                             <input type="number" class="form-control" id="groceriesPercentage" placeholder="Enter percentage">
+                             <input type="color" class="form-control form-control-color" id="groceriesColor" value="#f68849" title="Choose your color">
                          </div>
  
                          <div class="mb-3">
-                             <label for="pieChartCategory3" class="form-label">Category 3</label>
-                             <input type="number" class="form-control" id="category3Percentage" placeholder="Enter percentage">
-                             <input type="color" class="form-control form-control-color" id="category3Color" value="#70ed78" title="Choose your color">
+                             <label for="pieChartCategory3" class="form-label">Personal Spending</label>
+                             <input type="number" class="form-control" id="personalPercentage" placeholder="Enter percentage">
+                             <input type="color" class="form-control form-control-color" id="personalColor" value="#70ed78" title="Choose your color">
                          </div>
  
                          <div class="mb-3">
-                             <label for="pieChartCategory4" class="form-label">Category 4</label>
-                             <input type="number" class="form-control" id="category4Percentage" placeholder="Enter percentage">
-                            <input type="color" class="form-control form-control-color" id="category4Color" value="#4881ed" title="Choose your color">
+                             <label for="pieChartCategory4" class="form-label">Miscellaneous</label>
+                             <input type="number" class="form-control" id="miscellaneousPercentage" placeholder="Enter percentage">
+                            <input type="color" class="form-control form-control-color" id="miscellaneousColor" value="#4881ed" title="Choose your color">
                         </div>
                      </form>
                  </div>
@@ -96,18 +96,18 @@
          function updatePlannerPieChart(){
              // Storing percantages of each category in a list
              const percentageList = [
-                 parseFloat(document.getElementById("category1Percentage").value) || 0,
-                 parseFloat(document.getElementById("category2Percentage").value) || 0,
-                 parseFloat(document.getElementById("category3Percentage").value) || 0,
-                 parseFloat(document.getElementById("category4Percentage").value) || 0,
+                 parseFloat(document.getElementById("recurringPercentage").value) || 0,
+                 parseFloat(document.getElementById("groceriesPercentage").value) || 0,
+                 parseFloat(document.getElementById("personalPercentage").value) || 0,
+                 parseFloat(document.getElementById("miscellaneousPercentage").value) || 0,
              ];
  
              // Storing the colors for each category
              const colorList = [
-                 document.getElementById("category1Color").value || 0,
-                 document.getElementById("category2Color").value || 0,
-                 document.getElementById("category3Color").value || 0,
-                 document.getElementById("category4Color").value || 0,
+                 document.getElementById("reccuringColor").value || 0,
+                 document.getElementById("groceriesColor").value || 0,
+                 document.getElementById("personalColor").value || 0,
+                 document.getElementById("miscellaneousColor").value || 0,
              ];
  
              // Checking total percent values to make sure its between 0 and 100
