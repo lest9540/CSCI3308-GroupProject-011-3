@@ -15,3 +15,12 @@ CREATE TABLE transactions (
     amount DECIMAL(10, 2) NOT NULL,
     final_balance DECIMAL(10, 2) NOT NULL
 );
+
+DROP TABLE IF EXISTS plannerPiechartData;
+CREATE TABLE plannerPiechartData (
+    user_id VARCHAR(50) PRIMARY KEY,
+    recurring_percentage INT,
+    groceries_percentage INT,
+    personal_percentage INT,
+    miscellaneous_percentage INT
+);

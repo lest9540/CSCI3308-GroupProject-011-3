@@ -13,6 +13,7 @@ const bcrypt = require('bcryptjs');
 const axios = require('axios');
 const nodemailer = require('nodemailer');
 const mail = require('mailgun.js');
+const { error } = require('console');
 
 // create `ExpressHandlebars` instance and configure the layouts and partials dir.
 const hbs = handlebars.create({
@@ -102,15 +103,10 @@ app.get('/login', (req, res) => {
     res.render('pages/login.hbs')
 });
 
-//---------------------------------------------------------------------------------------------
-//front_page branch
-
 // .get for the front page
 app.get('/front', (req, res) => {
   res.render('pages/front');
 });
-
-//---------------------------------------------------------------------------------------------
 
 app.post("/login", async (req, res) => {
     try {db.any('SELECT * FROM users WHERE username = $1', [req.body.username]) 
@@ -232,6 +228,54 @@ app.post('/addTransaction', (req, res) => {
   console.log(req.body);
   db.none('INSERT INTO transactions(user_id, name, category, transaction_date, amount, final_balance) VALUES($1, $2, $3, $4, $5, $6)', [req.session.user[0].username, req.body.transactionName, req.body.category, req.body.transactionDate, req.body.transactionAmount, req.body.finalBalance]);
   res.redirect('/banking');
+});
+
+// Post to send planner piechart data to the database
+app.post('/postPlannerPieChartData', async (req, res) => {
+
+  // Grabbing the input data from the html and getting the logged in user's username
+  const {recurring_percentage, groceries_percentage, personal_percentage, miscellaneous_percentage} = req.body;
+  const userId = req.session.user[0].username
+
+  // Insert into the database table, returns success/error
+  try{
+    await db.none(
+      `INSERT INTO plannerPiechartData(user_id, recurring_percentage, groceries_percentage, personal_percentage, miscellaneous_percentage)
+      VALUES($1, $2, $3, $4, $5)
+      ON CONFLICT (user_id)
+      DO UPDATE SET recurring_percentage = $2, groceries_percentage = $3, personal_percentage = $4, miscellaneous_percentage = $5`,
+      [userId, recurring_percentage, groceries_percentage, personal_percentage, miscellaneous_percentage]
+    );
+    res.json({message: "Planner pie chart data saved successfully"});
+
+  } catch {error} {
+    console.error("Error saving the planner pie chart data", error);
+  }
+});
+
+// Gets data from planner piechart database table and returns query
+app.get('/loadPlannerPieChartData', async (req, res) => {
+
+  // Takes logged in user's username
+  const userId = req.session.user[0].username; 
+  
+  // Query to find username in the plannerPiechartData table to return the stored data
+  try {
+    const piePlannerChartData = await db.oneOrNone('SELECT * FROM plannerPiechartData WHERE user_id = $1', [userId]);
+    
+    if (piePlannerChartData) {
+      res.json(piePlannerChartData);
+    } else {
+      res.json({
+        recurring_percentage: 0,
+        groceries_percentage: 0,
+        personal_percentage: 0,
+        miscellaneous_percentage: 0
+      });
+    }
+  } catch (error) {
+    console.error('Error loading pie chart data:', error);
+  }
 });
 
 app.get('/logout', (req, res) => {

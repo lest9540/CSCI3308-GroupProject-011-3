@@ -58,7 +58,7 @@
                          <div class="mb-3">
                              <label for="pieChartCategory1" class="form-label">Recurring Expense</label>
                              <input type="number" class="form-control" id="recurringPercentage" placeholder="Enter percentage">
-                             <input type="color" class="form-control form-control-color" id="reccuringColor" value="#e74e4e" title="Choose your color">
+                             <input type="color" class="form-control form-control-color" id="recurringColor" value="#e74e4e" title="Choose your color">
                          </div>
  
                          <div class="mb-3">
@@ -89,6 +89,7 @@
              </div>
          </div>
      </div>
+
    <!--Script-->
      <script>
  
@@ -103,12 +104,7 @@
              ];
  
              // Storing the colors for each category
-             const colorList = [
-                 document.getElementById("reccuringColor").value || 0,
-                 document.getElementById("groceriesColor").value || 0,
-                 document.getElementById("personalColor").value || 0,
-                 document.getElementById("miscellaneousColor").value || 0,
-             ];
+             const colorList = ["#e74e4e", "#f68849", "#70ed78", "#4881ed"];
  
              // Checking total percent values to make sure its between 0 and 100
              // NOTE: Using Principles of Programming concepts, 'let' is used to just set the scope to here
@@ -120,6 +116,18 @@
              if(total > 100 || total == 0){
                  return
              }
+
+             // Saving planner piechart data to database
+            fetch('/postPlannerPieChartData', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json',},
+                body: JSON.stringify({
+                    recurring_percentage: percentageList[0],
+                    groceries_percentage: percentageList[1],
+                    personal_percentage: percentageList[2],
+                    miscellaneous_percentage: percentageList[3],
+                })
+            })
  
              // For loop to fill in the gradient
              let gradientCommands = "";
@@ -138,6 +146,26 @@
              // Updating .piechart conic gradient
              document.querySelector(".pieChart").style.background = `conic-gradient(${gradientCommands.slice(0, -1)})`;
          }
+
+        // Event script when the window is loaded, update the piechart to what the user has saved, leave empty otherwise
+        window.onload = async () => {
+            try {
+                // Request to get the planner pie chart data from database
+                const response = await fetch('/loadPlannerPieChartData');
+                const pieChartData = await response.json();
+                
+                // Stores database data into the html's variables
+                document.getElementById('recurringPercentage').value = pieChartData.recurring_percentage;
+                document.getElementById('groceriesPercentage').value = pieChartData.groceries_percentage;
+                document.getElementById('personalPercentage').value = pieChartData.personal_percentage;
+                document.getElementById('miscellaneousPercentage').value = pieChartData.miscellaneous_percentage;
+                
+                // Calls the function to update the piechart
+                updatePlannerPieChart(); 
+            } catch (error) {
+                console.error('Error loading pie chart data:', error);
+            }
+        }
      </script>
  </body>
  </html>
