@@ -248,7 +248,7 @@ app.post('/postPlannerPieChartData', async (req, res) => {
     );
     res.json({message: "Planner pie chart data saved successfully"});
 
-  } catch {error} {
+  } catch (error) {
     console.error("Error saving the planner pie chart data", error);
   }
 });

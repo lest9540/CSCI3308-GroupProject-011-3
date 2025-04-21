@@ -25,70 +25,68 @@
      </style>
  </head>
  <body>
-     <!--Title and Description-->
-     <div>
-         <h3>Make your own piechart</h3>
-         <p>Customize and modify a plan for your spending</p>
-     </div>
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Planner Pie Chart</h5>
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#pieChartModal"> Customize Piechart </button>
+            </div>
+            <div class="card-body">
+                <!--Piechart Visuals-->
+                <div class = "pieChart"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Piechart Modal -->
+    <div class="modal fade" id="pieChartModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
  
-     <!--Piechart Visuals-->
-     <div class = "pieChart">
+                <!--Modal Header-->
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5">Make your Piechart</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
  
-     </div>
+                <!--Modal Body-->
+                <div class="modal-body">
+                    <form id = "pieChartCategories">
+                        <div class="mb-3">
+                            <label for="pieChartCategory1" class="form-label">Recurring Expense</label>
+                            <input type="number" class="form-control" id="recurringPercentage" placeholder="Enter percentage">
+                            <input type="color" class="form-control form-control-color" id="recurringColor" value="#e74e4e" title="Choose your color">
+                        </div>
  
-     <!-- Button trigger modal -->
-     <div class="buttonContainer">
-         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#pieChartModal"> Customize Piechart </button>
-     </div>
+                        <div class="mb-3">
+                            <label for="pieChartCategory2" class="form-label">Groceries</label>
+                            <input type="number" class="form-control" id="groceriesPercentage" placeholder="Enter percentage">
+                            <input type="color" class="form-control form-control-color" id="groceriesColor" value="#f68849" title="Choose your color">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="pieChartCategory3" class="form-label">Personal Spending</label>
+                            <input type="number" class="form-control" id="personalPercentage" placeholder="Enter percentage">
+                            <input type="color" class="form-control form-control-color" id="personalColor" value="#70ed78" title="Choose your color">
+                        </div>
  
-     <!-- Piechart Modal -->
-     <div class="modal fade" id="pieChartModal" tabindex="-1" aria-hidden="true">
-         <div class="modal-dialog">
-             <div class="modal-content">
- 
-                 <!--Modal Header-->
-                 <div class="modal-header">
-                     <h1 class="modal-title fs-5">Make your Piechart</h1>
-                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                 </div>
- 
-                 <!--Modal Body-->
-                 <div class="modal-body">
-                     <form id = "pieChartCategories">
-                         <div class="mb-3">
-                             <label for="pieChartCategory1" class="form-label">Recurring Expense</label>
-                             <input type="number" class="form-control" id="recurringPercentage" placeholder="Enter percentage">
-                             <input type="color" class="form-control form-control-color" id="recurringColor" value="#e74e4e" title="Choose your color">
-                         </div>
- 
-                         <div class="mb-3">
-                             <label for="pieChartCategory2" class="form-label">Groceries</label>
-                             <input type="number" class="form-control" id="groceriesPercentage" placeholder="Enter percentage">
-                             <input type="color" class="form-control form-control-color" id="groceriesColor" value="#f68849" title="Choose your color">
-                         </div>
- 
-                         <div class="mb-3">
-                             <label for="pieChartCategory3" class="form-label">Personal Spending</label>
-                             <input type="number" class="form-control" id="personalPercentage" placeholder="Enter percentage">
-                             <input type="color" class="form-control form-control-color" id="personalColor" value="#70ed78" title="Choose your color">
-                         </div>
- 
-                         <div class="mb-3">
-                             <label for="pieChartCategory4" class="form-label">Miscellaneous</label>
-                             <input type="number" class="form-control" id="miscellaneousPercentage" placeholder="Enter percentage">
+                        <div class="mb-3">
+                            <label for="pieChartCategory4" class="form-label">Miscellaneous</label>
+                            <input type="number" class="form-control" id="miscellaneousPercentage" placeholder="Enter percentage">
                             <input type="color" class="form-control form-control-color" id="miscellaneousColor" value="#4881ed" title="Choose your color">
                         </div>
-                     </form>
-                 </div>
+                    </form>
+                </div>
  
                  <!--Modal Footer-->
                  <div class="modal-footer">
                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" onclick="updatePlannerPieChart()" data-bs-dismiss="modal">Save changes</button>
                 </div>
-             </div>
-         </div>
-     </div>
+            </div>
+        </div>
+    </div>
 
    <!--Script-->
      <script>
