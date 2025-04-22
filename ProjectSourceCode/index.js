@@ -1,6 +1,3 @@
-// import FormData from "form-data"; // form-data v4.0.1
-// import Mailgun from "mailgun.js"; // mailgun.js v11.1.0
-
 const express = require('express');
 const app = express();
 const handlebars = require('express-handlebars');
@@ -13,6 +10,8 @@ const bcrypt = require('bcryptjs');
 const axios = require('axios');
 const nodemailer = require('nodemailer');
 const mail = require('mailgun.js');
+const schedule = require('node-schedule');
+const wt = require("worker-thread");
 
 // create `ExpressHandlebars` instance and configure the layouts and partials dir.
 const hbs = handlebars.create({
@@ -57,7 +56,6 @@ app.use(
     
   })
 );
-
 
 app.use(
   bodyParser.urlencoded({
@@ -125,9 +123,7 @@ async function assembleSummaryText(name, callback) {
         upcoming_text += results[i].name + " - " + results[i].transaction_date.toLocaleDateString() + " - $" + results[i].amount + "\n";
       }
 
-      console.log("Greetings " + name + ",\n\nBecause you have opted into regular updates we have provided you the following summary for this month so far:\n\n" + recent_text + "\n" + upcoming_text + "\n Thank you for using SpellSaver!");
       callback("Greetings " + name + ",\n\nBecause you have opted into regular updates we have provided you the following summary for this month so far:\n\n" + recent_text + "\n" + upcoming_text + "\n Thank you for using SpellSaver!");
-      // return ("Greetings " + name + ",\n\nBecause you have opted into regular updates we have provided you the following summary for this month so far:\n\n" + recent_text + "\n" + upcoming_text + "\n Thank you for using SpellSaver!");
     })
     .catch(error => {
       console.log(error);
@@ -160,6 +156,54 @@ async function sendSummary(name, email, summary_text) {
     console.log(error);
   }
 };
+
+async function summary() {
+  console.log("summary function called");
+  try {
+    await db.any('SELECT * FROM users WHERE reminders = true')
+      .then(results => {
+        for (let i = 0; i < results.length; i++) {
+          assembleSummaryText(results[i].username, text => {
+            sendSummary(results[i].username, results[i].email, text);
+          })
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      })
+  }
+  catch (error) {
+    console.log(error);
+  }
+}
+
+function timer() {
+  const rule = new schedule.RecurrenceRule();
+  rule.second = 0;
+
+  const job = schedule.scheduleJob(rule, function(){
+    console.log('The answer to life, the universe, and everything!');
+  });
+
+  return job;
+}
+
+// console.log("Starting the timer channel");
+const ch = wt.createChannel(timer, 1);
+
+ch.on("done", (err, result) => {
+  if (err) {
+    console.error(err);
+  }
+  console.log("channel has commited alivement");
+  console.log(result);
+});
+
+ch.on("stop", () => {
+  console.log("channel has commited unalivement");
+});
+
+ch.add(0);
 
 app.get('/welcome', (req, res) => {
   res.json({status: 'success', message: 'Welcome!'});
@@ -233,10 +277,6 @@ app.get('/user', async (req, res) => {
 
 app.get('/settings', (req, res) => {
   res.render('pages/settings', {OptIn: req.session.user[0].reminders});
-  assembleSummaryText(req.session.user[0].username, text => {
-    console.log(text);
-    sendSummary(req.session.user[0].username, req.session.user[0].email, text);
-  })
 });
 
 app.post('/settings', async (req, res) => {
@@ -261,29 +301,6 @@ app.post('/settings', async (req, res) => {
       res.render('pages/user', {name: req.session.user[0].user, email: req.session.user[0].email, OptIn: flag});
     });
   });
-
-// app.get('/discover', (req, res) => {
-//     axios({
-//         url: `https://app.ticketmaster.com/discovery/v2/events.json`,
-//         method: 'GET',
-//         dataType: 'json',
-//         headers: { 'Accept-Encoding': 'application/json'},
-//         params: {
-//             apikey: process.env.API_KEY,
-//             keyword: 'Muse',
-//             size: 10
-//         }
-//     })
-//     .then(results => { 
-//         // the results will be displayed on the terminal if the docker containers are running 
-//         res.render('pages/discover', {event: results.data._embedded.events});
-//         // Send some parameters
-//     })
-//     .catch(error => { 
-//         console.log(error);
-//         res.render(400, 'pages/discover', {event: []});
-//     });
-// });
 
 app.get('/banking', async (req, res) => {
     try{
