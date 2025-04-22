@@ -8,7 +8,6 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const bcrypt = require('bcryptjs');
 const axios = require('axios');
-var cookieSession = require('cookie-session')
 
 
 // create `ExpressHandlebars` instance and configure the layouts and partials dir.
