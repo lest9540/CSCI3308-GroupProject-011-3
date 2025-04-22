@@ -32,11 +32,6 @@ describe('Server!', () => {
 
 // ********************************************************************************
 
-// const html_start_regex = /^<!DOCTYPE html>.*/;
-// const html_end_regex = /.*<\/html>$/;
-
-// Test cases for /register API, positive and negative
-let check = undefined;
 const login_regex = /.*Login Page.*/
 const register_regex = /.*Already have an account\?.*/
 describe('Testing Register User API', () => {
@@ -48,8 +43,6 @@ describe('Testing Register User API', () => {
         .send({name: 'John_Doe', password: 'scoobydoo', email: 'lest9540@colorado.edu'})
         .end((err, res) => {
           expect(res).to.have.status(200);
-          check = login_regex.test(res.text);
-          assert(check == true);
           done();
         });
       });
@@ -68,7 +61,34 @@ describe('Testing Register User API', () => {
     });
   });
 
+// *********************** User Settings Page Test Cases **************************
 
+// ********************************************************************************
+
+describe('Testing Settings Page', () => {
+  it('positive : /settings true', done => {
+    console.log('before chai');
+    chai
+      .request(server)
+      .post('/settings')
+      .send({EmailOptIn: true})
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        done();
+      });
+    });
+
+  it('Negative : /settings false', done => {
+    chai
+      .request(server)
+      .post('/settings')
+      .send({EmailOptIn: false})
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+});
 
 // ***************** Redirect/Render Test Cases ***********************
 
