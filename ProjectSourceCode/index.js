@@ -278,6 +278,80 @@ app.get('/loadPlannerPieChartData', async (req, res) => {
   }
 });
 
+//----------------------------------------------
+// Testing for pieChartTransaction
+// Grabs transaction history data, calculates percentages and returns list of percentages
+app.get('/loadPieChartTransaction', async (req, res) => {
+  const userId = req.session.user[0].username; 
+  
+  try {
+    const userTransactions = await db.any(
+      `SELECT *
+      FROM transactions
+      WHERE user_id = $1`,
+      [userId]
+    );
+
+    let total = 0;
+    let recurringTotal = 0;
+    let groceriesTotal = 0;
+    let personalTotal = 0;
+    let miscTotal = 0;
+
+    // Loop that goes through each transaction and adds money to each total
+    userTransactions.forEach(transaction => {
+      const amountTemp = transaction.amount;
+      total += amountTemp;
+
+      switch(transaction.category) {
+        case 'Recurring Expense':
+            recurringTotal += transaction.amount;
+          break;
+        case 'Groceries':
+            groceriesTotal += transaction.amount;
+          break;
+        case 'Personal Spending':
+            personalTotal += transaction.amount;
+          break;
+        case 'Miscellaneous':
+            miscTotal += transaction.amount;
+          break;
+        default:
+          break;
+      }
+    });
+
+    // Calculating percentages for each category
+    const recurringPercentage = (recurringTotal / total) * 100;
+    const groceriesPercentage = (groceriesTotal / total) * 100;
+    const personalPercentage = (personalTotal / total) * 100;
+    const miscPercentage = (miscTotal / total) * 100;
+
+    // Checks to see if the total is positive, if not returns 0
+    if (total > 0){
+      return res.json({
+        recurring_percentage: recurringPercentage,
+        groceries_percentage: groceriesPercentage,
+        personal_percentage: personalPercentage,
+        miscellaneous_percentage: miscPercentage
+      });
+    } else {
+      return res.json({
+        recurring_percentage: 0,
+        groceries_percentage: 0,
+        personal_percentage: 0,
+        miscellaneous_percentage: 0
+      });
+    }
+
+  } catch (error) {
+    console.error('Error loading pie chart data from transaction history:', error);
+    return res.status(500).json({ error: 'Error loading transactions'})
+  }
+});
+//----------------------------------------------
+
+
 app.get('/logout', (req, res) => {
     req.session.destroy();
     res.render('pages/logout.hbs');
