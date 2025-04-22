@@ -206,5 +206,29 @@ app.get('/logout', (req, res) => {
     res.render('pages/logout.hbs');
 });
 
+// For Calendar Partial - - - - - - - - - - - - 
+app.get('/api/transactions', async (req, res) => {
+  const date = req.query.date;
+  const user = req.session.user?.[0]?.username; // Read it from left to right -> ? checks if there is a user before access the array with transactions
+
+  if (!date || !user) 
+    {
+      return res.status(400).json({ error: 'Missing date or user' });
+    }
+
+  try {
+    const transactions = await db.any(
+      'SELECT name, amount, final_balance FROM transactions WHERE user_id = $1 AND DATE(transaction_date) = $2',
+      [user, date]
+    );
+    return res.json(transactions);
+
+    } catch (error) 
+      {
+        console.error('Error getting transactions for calendar:', error);
+        return res.status(500).json({ error: 'Server Error' });
+      }
+});
+// - - - - - - - - - - - - - - - - - - - - - - -
 module.exports = app.listen(3000);
 console.log('Server is listening on port 3000');

@@ -17,7 +17,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            text-align: center;
+            text-align: left;
         }
 
         #calendar {
@@ -36,12 +36,14 @@
         .days, .dates {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            /*If I dont have time add background color in order to make the calendar readable */
         }
 
         .day, .date {
             padding: 10px;
-            border: 1px solid #ccc;
+            border: 1px solid #f4f4f4; /* Changes the grid lines */
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .today {
@@ -52,31 +54,45 @@
 
         .rightHalf {
             position: absolute;
-            top: 0;
             left: 53%;
             width: 50%;
-            height: 130vh;
             display: flex;
             justify-content: flex-start; 
             align-items: center; 
         }
 
         .menu {
-            width: 1120px; /*TEST: original size 750*/
+            width: 1120px;
             right: 50%;
-            margin-top: 3vh; /* TEST ORIGINAL 7vh*/
+            margin-top: 3vh;
             min-height: 550px;
-            margin-left: 120px;
-            color: #fff;
+            color: #fffrgb(0, 0, 0)
             display: flex;
 
             border-radius: 10px;
             background-color: #f4f4f4;
+            flex-direction: column; 
+            align-items: flex-start;
+            padding-left: 20px;
         }
 
-        .menuText {
-            color: black;
+        .menuContent {
+            width: 100%;
         }
+
+
+        /*SHOWS THE TRANSACTIONS FOR THE CORRESPONDING DAY */
+        .menuTransactions {
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 10px;
+            text-align: left;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 67%;
+        }
+
 
         .date.selected {
             background-color: #a4c8ff;
@@ -186,15 +202,61 @@
 
                 // Changes the transactions due to match the date that the user has selected
                 function showSelectedDay() {
-                    const display = document.querySelector(".menu h3"); // heading from the transaction menu
+                    const display = document.querySelector(".menu h3");
+                    
+                    // Holder for the text when you have no date selected
+                    const placeholder = document.getElementById("placeholderText");
+                            if (placeholder) placeholder.remove();
+
+                    // Holds the day that the user selected
                     if (selectedDay) {
-                        const formatted = selectedDay.toLocaleDateString("default", {
+                        const formatted = selectedDay.toLocaleDateString("default", { //toLocaleDateString formats it to match how the date is written in your region
                             weekday: 'long',
                             year: 'numeric',
                             month: 'long',
                             day: 'numeric'
                         });
                         display.textContent = formatted;
+
+                        // Holds the date that the user has selected on
+                        const dateString = selectedDay.toISOString().split("T")[0]; // Commands readjusts the taken date and writes it in a nice format
+
+                        // Is fetching data from the database 
+                        fetch(`/api/transactions?date=${dateString}`)
+                            .then(response => response.json()) // Converts the data into an array because we are presenting the transactions as a list
+
+                            // Start presenting the transactions due on the day selected
+                            .then(data => 
+                            {
+                                const menu = document.querySelector(".menu");
+
+                                // Removes old transactions from date previously clicked
+                                const oldData = menu.querySelector(".transactions");
+                                if (oldData) oldData.remove();
+
+                                const transactionContainer = document.createElement("div");
+                                transactionContainer.className = "transactions";
+                                transactionContainer.style.marginLeft = "20px"; // Style for the events 
+
+                                if (data.length === 0) { // Shows text that user has no transactions due on this particular day
+                                    transactionContainer.innerHTML = "<h3 class='menuText'>No transactions on this day.</h3>";
+                                } else { // If there are transactions due on that day
+                                    data.forEach(tx => {
+                                        // Presents the transactions in a list format
+                                        const txHtml = `
+                                            <div class="menuTransactions">
+                                                <p><strong>${tx.name}</strong></p>
+                                                <p>Amount: $${tx.amount}</p>
+                                                <p>Balance after: $${tx.final_balance}</p>
+                                            </div>`;
+
+                                        transactionContainer.innerHTML += txHtml;
+                                    });
+                                }
+
+                                menu.appendChild(transactionContainer);
+                            })
+                            .catch(err => console.error('Fetch error:', err));
                     }
                 }
             </script>
@@ -202,9 +264,14 @@
 
         {{!-- Show Transactions Side --}}
         <div class="menu"> 
-            <h3 class = "menuText" style="margin-left: 20px; margin-top: 20px;">Transactions Due</h3>
-            <div><h3 class = "menuText" style="margin-left: 10%; margin-top: 50%"> Nothing selected yet </h3></div> {{!-- Add way so this goes away when selecting a day--}}
-            {{!-- Add implementation for showing the transactions due on that day --}}
+            <div class="menuContent">
+                <h3 class="menuText" style="margin-top: 20px;">Transactions Due</h3>
+
+                <div id="placeholderText">
+                    <h3 class="menuText">Nothing selected yet</h3>
+                </div>
+
+            </div>
         </div>
 
     </body>

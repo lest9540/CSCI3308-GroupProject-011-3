@@ -1,4 +1,14 @@
 {{>transaction_history}}
 {{!-- Get partials that user wants to display --}}
 
-{{>calendar}}
+{{!-- Styling so the Calendar doesn't overlay over the transactions --}}
+<style>
+    .calendarFix {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    /* No absolute positioning! */
+}
+</style>
+<div class="calendarFix">{{>calendar}}</div>
+{{!------------------------------------------------------------------}}
