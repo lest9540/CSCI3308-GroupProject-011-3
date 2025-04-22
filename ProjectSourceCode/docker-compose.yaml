@@ -33,6 +33,6 @@ services:
       - db
     volumes:
       - ./:/repository
-    command: 'npm run timer'
+    command: 'npm run timer' #npm run timer 
 volumes:
   group-project:
