@@ -278,12 +278,11 @@ app.get('/loadPlannerPieChartData', async (req, res) => {
   }
 });
 
-//----------------------------------------------
-// Testing for pieChartTransaction
 // Grabs transaction history data, calculates percentages and returns list of percentages
 app.get('/loadPieChartTransaction', async (req, res) => {
   const userId = req.session.user[0].username; 
   
+  // Query to grab transactions by user
   try {
     const userTransactions = await db.any(
       `SELECT *
@@ -300,21 +299,21 @@ app.get('/loadPieChartTransaction', async (req, res) => {
 
     // Loop that goes through each transaction and adds money to each total
     userTransactions.forEach(transaction => {
-      const amountTemp = transaction.amount;
+      const amountTemp = parseFloat(transaction.amount);
       total += amountTemp;
 
       switch(transaction.category) {
         case 'Recurring Expense':
-            recurringTotal += transaction.amount;
+            recurringTotal += amountTemp;
           break;
         case 'Groceries':
-            groceriesTotal += transaction.amount;
+            groceriesTotal += amountTemp;
           break;
         case 'Personal Spending':
-            personalTotal += transaction.amount;
+            personalTotal += amountTemp;
           break;
         case 'Miscellaneous':
-            miscTotal += transaction.amount;
+            miscTotal += amountTemp;
           break;
         default:
           break;
@@ -330,10 +329,10 @@ app.get('/loadPieChartTransaction', async (req, res) => {
     // Checks to see if the total is positive, if not returns 0
     if (total > 0){
       return res.json({
-        recurring_percentage: recurringPercentage,
-        groceries_percentage: groceriesPercentage,
-        personal_percentage: personalPercentage,
-        miscellaneous_percentage: miscPercentage
+        recurring_percentage: Number(recurringPercentage.toFixed(1)),
+        groceries_percentage: Number(groceriesPercentage.toFixed(1)),
+        personal_percentage: Number(personalPercentage.toFixed(1)),
+        miscellaneous_percentage: Number(miscPercentage.toFixed(1))
       });
     } else {
       return res.json({
@@ -349,8 +348,6 @@ app.get('/loadPieChartTransaction', async (req, res) => {
     return res.status(500).json({ error: 'Error loading transactions'})
   }
 });
-//----------------------------------------------
-
 
 app.get('/logout', (req, res) => {
     req.session.destroy();

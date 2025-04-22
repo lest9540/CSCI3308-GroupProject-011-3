@@ -1,142 +1,134 @@
-<!DOCTYPE html>
- <html>
- <head>
-     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-     <style>
-         body {
-             text-align: center;
-         }
+<style>
+    body {
+        text-align: center;
+    }
          
-         .tranPieChart {
-             width: 250px;
-             height: 250px;
-             border-radius: 50%;
-             background: lightgray;
-             border: 1px solid;
-             border-color: rgb(107, 107, 107);
-             margin: auto;
-            background-color: gray;
-        }
+    .tranPieChart {
+        width: 250px;
+        height: 250px;
+        border-radius: 50%;
+        background: lightgray;
+        border: 1px solid;
+        border-color: rgb(107, 107, 107);
+        margin: auto;
+        background-color: gray;
+    }
  
-        .buttonContainer{
-            margin-bottom: 50px;
-        }
+    .buttonContainer{
+        margin-bottom: 50px;
+    }
 
-        .legendContainer{
-            display: flex;
-            align-items: center;
-            margin-top: 10px;
-        }
+    .legendContainer{
+        display: flex;
+        align-items: center;
+        margin-top: 10px;
+    }
 
-        .legendItem{
-            display: flex;
-            align-items: center;
-            margin-right: 5px;
-        }
+    .legendItem{
+        display: flex;
+        align-items: center;
+        margin-right: 5px;
+    }
 
-        .legendColor{
-            width: 15px;
-            height: 15px;
-            margin-right: 5px;
-            border-radius: 100%;
-        }
- 
-     </style>
- </head>
- <body>
+    .legendColor{
+        width: 15px;
+        height: 15px;
+        margin-right: 5px;
+        border-radius: 100%;
+    }
+</style>
 
-    <!--General section on the banking page-->
-    <div class="container mt-5">
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="card-title mb-0">Transaction Pie Chart</h5>
-            </div>
-            <div class="card-body">
-                <!--Piechart Visuals-->
-                <div class = "tranPieChart"></div>
+<!--General section on the banking page-->
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">Transaction Pie Chart</h5>
+            <!-- Button to load data -->
+            <button type="button" class="btn btn-primary" onclick="updatePieChartTransaction()"> Update Piechart </button>
+        </div>
+        <div class="card-body">
+            <!--Piechart Visuals-->
+            <div class = "tranPieChart"></div>
 
-                <div class = "legendContainer" id="plannerPieChartLegend"> 
-                    <div class="legendItem">
-                        <div class="legendColor"></div>
-                        <div class="legendColor" style="background-color: #e74e4e;"></div>
-                        <span id="tranRecurringLegend">Recurring Expenses: 0%</span>
-                    </div>
+            <div class = "legendContainer" id="plannerPieChartLegend"> 
+                <div class="legendItem">
+                    <div class="legendColor"></div>
+                    <div class="legendColor" style="background-color: #e74e4e;"></div>
+                    <span id="tranRecurringLegend">Recurring Expenses: 0%</span>
+                </div>
 
-                    <div class="legendItem">
-                        <div class="legendColor"></div>
-                        <div class="legendColor" style="background-color: #f68849;"></div>
-                        <span id="tranGroceryLegend">Groceries: 0%</span>
-                    </div>
+                <div class="legendItem">
+                    <div class="legendColor"></div>
+                    <div class="legendColor" style="background-color: #f68849;"></div>
+                    <span id="tranGroceryLegend">Groceries: 0%</span>
+                </div>
 
-                    <div class="legendItem">
-                        <div class="legendColor"></div>
-                        <div class="legendColor" style="background-color: #70ed78;"></div>
-                        <span id="tranPersonalLegend">Personal Expenses: 0%</span>
-                    </div>
+                <div class="legendItem">
+                    <div class="legendColor"></div>
+                    <div class="legendColor" style="background-color: #70ed78;"></div>
+                    <span id="tranPersonalLegend">Personal Expenses: 0%</span>
+                </div>
 
-                    <div class="legendItem">
-                        <div class="legendColor"></div>
-                        <div class="legendColor" style="background-color: #4881ed;"></div>
-                        <span id="tranMiscellaneousLegend">Miscellaneous: 0%</span>
-                    </div>
+                <div class="legendItem">
+                    <div class="legendColor"></div>
+                    <div class="legendColor" style="background-color: #4881ed;"></div>
+                    <span id="tranMiscellaneousLegend">Miscellaneous: 0%</span>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-   <!--Script-->
-    <script>
-        // Updating Piechart function
-        async function updatePieChartTransaction(){
-            
-            // Calling Javascript /loadPieChartTransaction to get percentages
-            const response = await fetch('/loadPieChartTransaction')
-            const pieChartData = await response.json();
+<!--Script-->
+<script>
+    // Updating Piechart function
+    async function updatePieChartTransaction(){
+        
+        // Calling Javascript /loadPieChartTransaction to get percentages
+        const response = await fetch('/loadPieChartTransaction')
+        const pieChartData = await response.json();
 
-            console.log(pieChartData);
+        console.log(pieChartData);
 
-            // Storing the colors and categories into lists
-            const percentageList = [pieChartData.recurring_percentage, pieChartData.groceries_percentage, pieChartData.personal_percentage, pieChartData.miscellaneous_percentage];
-            const colorList = ["#e74e4e", "#f68849", "#70ed78", "#4881ed"];
- 
-             // Checking total percent values to make sure its between 0 and 100
-            let total = percentageList[0] + percentageList[1] + percentageList[2] + percentageList[3];
- 
-            if(total > 100 || total == 0){
-                return
-            }
- 
-            // For loop to fill in the gradient
-            let gradientCommands = "";
-            let percentAccumulator = 0;
-            let percentageListLength = percentageList.length;
- 
-            for(let i = 0; i < percentageListLength; i++){
-                let start = (percentAccumulator / total) * 100;
-                percentAccumulator += percentageList[i]
-                let end = (percentAccumulator / total) * 100;
- 
-                // Concats commands into a single variable
-                gradientCommands += `${colorList[i]} ${start}% ${end}%,`;
-            }
- 
-            // Updating .piechart conic gradient
-            document.querySelector(".tranPieChart").style.background = `conic-gradient(${gradientCommands.slice(0, -1)})`;
+        // Storing the colors and categories into lists
+        const percentageList = [pieChartData.recurring_percentage, pieChartData.groceries_percentage, pieChartData.personal_percentage, pieChartData.miscellaneous_percentage];
+        const colorList = ["#e74e4e", "#f68849", "#70ed78", "#4881ed"];
 
-            // Updating the legend
-            updateLegend(percentageList);
+            // Checking total percent values to make sure its between 0 and 100
+        let total = percentageList[0] + percentageList[1] + percentageList[2] + percentageList[3];
+
+        if(total > 100.1 || total <= 0){
+            return
         }
 
-        // Function for updating the legend's percentages
-        function updateLegend(percentageList){
-            document.getElementById("tranRecurringLegend").textContent = `Recurring Expenses: ${percentageList[0]}%`;   
-            document.getElementById("tranGroceryLegend").textContent = `Groceries: ${percentageList[1]}%`; 
-            document.getElementById("tranPersonalLegend").textContent = `Personal Expenses: ${percentageList[2]}%`; 
-            document.getElementById("tranMiscellaneousLegend").textContent = `Miscellaneous: ${percentageList[3]}%`; 
+        // For loop to fill in the gradient
+        let gradientCommands = "";
+        let percentAccumulator = 0;
+        let percentageListLength = percentageList.length;
+
+        for(let i = 0; i < percentageListLength; i++){
+            let start = (percentAccumulator / total) * 100;
+            percentAccumulator += percentageList[i]
+            let end = (percentAccumulator / total) * 100;
+
+            // Concats commands into a single variable
+            gradientCommands += `${colorList[i]} ${start}% ${end}%,`;
         }
 
-        document.addEventListener('DOMContentLoaded', updatePieChartTransaction);
+        // Updating .piechart conic gradient
+        document.querySelector(".tranPieChart").style.background = `conic-gradient(${gradientCommands.slice(0, -1)})`;
 
-    </script>
- </body>
- </html>
+        // Updating the legend
+        updateTranLegend(percentageList);
+    }
+
+    // Function for updating the legend's percentages
+    function updateTranLegend(percentageList){
+        document.getElementById("tranRecurringLegend").textContent = `Recurring Expenses: ${percentageList[0]}%`;   
+        document.getElementById("tranGroceryLegend").textContent = `Groceries: ${percentageList[1]}%`; 
+        document.getElementById("tranPersonalLegend").textContent = `Personal Expenses: ${percentageList[2]}%`; 
+        document.getElementById("tranMiscellaneousLegend").textContent = `Miscellaneous: ${percentageList[3]}%`; 
+    }
+
+    document.addEventListener('DOMContentLoaded', updatePieChartTransaction);
+</script>
