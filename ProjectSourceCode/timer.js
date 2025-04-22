@@ -135,6 +135,7 @@ async function summary() {
             sendSummary(results[i].username, results[i].email, text);
           })
         }
+        console.log("Summary function complete");
       })
       .catch(error => {
         console.log(error);
@@ -145,5 +146,11 @@ async function summary() {
   }
 }
 
-// Schedule the summary function to run every 5 minutes
-const intervalId = setInterval(summary, 300000);
+const rule = new schedule.RecurrenceRule();
+  console.log("Scheduling timer");
+  rule.hour = 12;
+
+  const job = schedule.scheduleJob(rule, function(){
+    console.log("Running summary function");
+    summary();
+  });

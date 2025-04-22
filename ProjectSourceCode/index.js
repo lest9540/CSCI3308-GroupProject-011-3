@@ -177,34 +177,6 @@ async function summary() {
   }
 }
 
-function timer() {
-  const rule = new schedule.RecurrenceRule();
-  rule.second = 0;
-
-  const job = schedule.scheduleJob(rule, function(){
-    console.log('The answer to life, the universe, and everything!');
-  });
-
-  return job;
-}
-
-// console.log("Starting the timer channel");
-const ch = wt.createChannel(timer, 1);
-
-ch.on("done", (err, result) => {
-  if (err) {
-    console.error(err);
-  }
-  console.log("channel has commited alivement");
-  console.log(result);
-});
-
-ch.on("stop", () => {
-  console.log("channel has commited unalivement");
-});
-
-ch.add(0);
-
 app.get('/welcome', (req, res) => {
   res.json({status: 'success', message: 'Welcome!'});
 });
