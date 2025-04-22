@@ -207,7 +207,8 @@ app.get('/logout', (req, res) => {
 });
 
 // For Calendar Partial - - - - - - - - - - - - 
-app.get('/api/transactions', async (req, res) => {
+app.get('/api/transactions', async (req, res) => { // use api because it is used for data exchange and the calendar needs to extract the data of the transactions
+  // Also use api because if using another way then the calendar wouldn't update when the user made changes -> user would have to reload to see the changes
   const date = req.query.date;
   const user = req.session.user?.[0]?.username; // Read it from left to right -> ? checks if there is a user before access the array with transactions
 
@@ -229,6 +230,35 @@ app.get('/api/transactions', async (req, res) => {
         return res.status(500).json({ error: 'Server Error' });
       }
 });
+
+// Updates the indicators on the calendar dates (updates the lines to show that there is a transaction due on this date)  
+app.get('/api/transaction-dates', async (req, res) => {
+  const { month, year } = req.query;
+  const user = req.session.user?.[0]?.username;
+
+  if (!month || !year || !user) {
+    return res.status(400).json({ error: 'Missing month, year, or user' });
+  }
+
+  try {
+    const results = await db.any(
+      `SELECT DISTINCT DATE(transaction_date) AS date
+        FROM transactions
+       WHERE user_id = $1
+         AND EXTRACT(MONTH FROM transaction_date) = $2
+         AND EXTRACT(YEAR FROM transaction_date) = $3`,
+      [user, month, year]
+    );
+
+    const formatted = results.map(row => row.date.toISOString().split('T')[0]);
+    return res.json(formatted);
+
+  } catch (error) {
+    console.error('Error getting transaction dates:', error);
+    return res.status(500).json({ error: 'Server Error' });
+  }
+});
 // - - - - - - - - - - - - - - - - - - - - - - -
+
 module.exports = app.listen(3000);
 console.log('Server is listening on port 3000');

@@ -20,6 +20,7 @@
             text-align: left;
         }
 
+        /* Styling for the calendar itself */
         #calendar {
             width: 300px;
             margin: 20px auto;
@@ -45,13 +46,30 @@
             justify-content: center;
             align-items: center;
         }
+        
+        /* Styling for the calendar's identification that there is a transaction due on that day */ 
+        .date.hasTransaction {
+            position: relative;
+        }
 
+        .date.hasTransaction::after {
+            content: "";
+            position: absolute;
+            bottom: 9px;
+            width: 13px;
+            height: 3px;
+            background-color: #51aeff; /* CHANGES THE COLOR OF THE LINE INDICATOR */
+            border-radius: 2px; /* Rounds the line out */
+        }
+
+        /* Styling that just indicates on calendar what today is*/
         .today {
-            background-color: #007bff;
+            background-color: #a4c8ff;
             color: white;
             border-radius: 50%;
         }
 
+        /* Styling that moves the calendar to the right half of the screen */
         .rightHalf {
             position: absolute;
             left: 53%;
@@ -61,12 +79,13 @@
             align-items: center; 
         }
 
+        /* Styling for showing the transactions */
         .menu {
             width: 1120px;
             right: 50%;
             margin-top: 3vh;
             min-height: 550px;
-            color: #fffrgb(0, 0, 0)
+            color: #fff
             display: flex;
 
             border-radius: 10px;
@@ -95,7 +114,7 @@
 
 
         .date.selected {
-            background-color: #a4c8ff;
+            background-color: #007bff;
             color: white;
             border-radius: 50%;
         }
@@ -113,10 +132,9 @@
                     <i class = "fa fa-angle-right next" onclick="changeMonth(1)"></i> {{!-- Using calendar arrows --}}
                 </div>
 
-                {{!-- Buttons for Today and Adding an Event (TEMP ! ! ! ! ! ! ! ! !) --}}
+                {{!-- Buttons for Today --}}
                 <div>
                     <button onclick="todayBut()" class="btn btn-primary" style="margin-right: 250px; margin-bottom: 10px">Today</button>
-                    {{!-- <button style="margin-left: 90px; margin-bottom: 10px;">Add Transaction</button> --}}
                 </div>
 
                 {{!-- For the Days of the week for calendar --}}
@@ -135,48 +153,61 @@
                 let selectedDay = null; // used for a selected date
 
                 // Used to basically reload the calendar with updated changes -> today date, users picking a date, changing month, etc.
-                function renderCalendar(date) {
-                    // Gets sets up the calendar for the month
+                async function renderCalendar(date) 
+                {
                     const year = date.getFullYear();
                     const month = date.getMonth();
                     const firstDay = new Date(year, month, 1).getDay();
                     const lastDate = new Date(year, month + 1, 0).getDate();
                     const today = new Date();
 
+                    // Get transaction dates for this month (underline indicator)
+                    let transactionDates = [];
+                    try {
+                        const response = await fetch(`/api/transaction-dates?month=${month + 1}&year=${year}`); // gets the days that have transactions due 
+                        transactionDates = await response.json(); // Use await because we need to make sure it gets through all 29/30/31 days
+                    } catch (err) {
+                        console.error('Error fetching transaction dates:', err);
+                    }
+
                     document.getElementById("monthYear").innerText =
-                    date.toLocaleString("default", { month: "long" }) + " " + year;
+                        date.toLocaleString("default", { month: "long" }) + " " + year;
 
                     const datesEl = document.getElementById("dates");
                     datesEl.innerHTML = "";
 
-                    // Add empty cells for days before the first of the month
+                    // Makes the days for the calendar
                     for (let i = 0; i < firstDay; i++) {
-                    datesEl.innerHTML += `<div class="date"></div>`;
+                        datesEl.innerHTML += `<div class="date"></div>`;
                     }
-
-                    // Add day numbers to the calendar (1, 2, 3, ...)
+                    // Sets up the days for the calendar
                     for (let day = 1; day <= lastDate; day++) {
                         const selectDay = new Date(year, month, day);
+                        const isoDate = selectDay.toISOString().split("T")[0];
 
-                        // Holds todays date
+                        // Variable that holds what day it is today
                         const isToday =
                             day === today.getDate() &&
                             month === today.getMonth() &&
                             year === today.getFullYear();
-                        
-                        // Holds the selected day the user clicks on
+                        // Variable that holds what day the user has selected
                         const isSelected =
                             selectedDay &&
                             day === selectedDay.getDate() &&
                             month === selectedDay.getMonth() &&
                             year === selectedDay.getFullYear();
 
-                        // Settings to show the day selected
-                        const dayDiv = document.createElement("div");
-                        dayDiv.className = "date" + (isToday ? " today" : "") + (isSelected ? " selected" : ""); // changes to show the selected day variables used before
-                        dayDiv.textContent = day; // makes sure that the day is still visible 
+                        // Used for indication of days that have a transaction (underline on calendar)
+                        const hasTransaction = transactionDates.includes(isoDate);
 
-                        // For when the user clicks on a day on the calendar
+                        // Used for the day that the user is selecting / selected
+                        const dayDiv = document.createElement("div");
+                        dayDiv.className = "date" +
+                            (isToday ? " today" : "") +
+                            (isSelected ? " selected" : "") +
+                            (hasTransaction ? " hasTransaction" : "");
+
+                        dayDiv.textContent = day;
                         dayDiv.addEventListener("click", () => {
                             selectedDay = selectDay;
                             renderCalendar(currentDate);
@@ -185,12 +216,13 @@
                         datesEl.appendChild(dayDiv);
                     }
                 }
-                // Changes the corresponding day to match the first day of the month (if it starts on monday, tuesday, etc.)
+                renderCalendar(currentDate);
+
+                // Function that changes the month with the arrows 
                 function changeMonth(offset) {
                     currentDate.setMonth(currentDate.getMonth() + offset);
                     renderCalendar(currentDate);
                 }
-                renderCalendar(currentDate);
 
                 // Function that automatically selects todays date and shows transactions due "today"
                 function todayBut(){
@@ -221,7 +253,7 @@
                         // Holds the date that the user has selected on
                         const dateString = selectedDay.toISOString().split("T")[0]; // Commands readjusts the taken date and writes it in a nice format
 
-                        // Is fetching data from the database 
+                        // Is fetching data from the database -> fetching the data from the index.js 
                         fetch(`/api/transactions?date=${dateString}`)
                             .then(response => response.json()) // Converts the data into an array because we are presenting the transactions as a list
 
@@ -236,7 +268,7 @@
 
                                 const transactionContainer = document.createElement("div");
                                 transactionContainer.className = "transactions";
-                                transactionContainer.style.marginLeft = "20px"; // Style for the events 
+                                transactionContainer.style.marginLeft = "20px"; // Style for the transactions 
 
                                 if (data.length === 0) { // Shows text that user has no transactions due on this particular day
                                     transactionContainer.innerHTML = "<h3 class='menuText'>No transactions on this day.</h3>";
@@ -259,6 +291,7 @@
                             .catch(err => console.error('Fetch error:', err));
                     }
                 }
+
             </script>
         </div>
 
