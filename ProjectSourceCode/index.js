@@ -232,7 +232,7 @@ app.get('/api/transactions', async (req, res) => { // use api because it is used
 });
 
 // Updates the indicators on the calendar dates (updates the lines to show that there is a transaction due on this date)  
-app.get('/api/transaction-dates', async (req, res) => {
+app.get('/api/transaction-dates', async (req, res) => { // Like said before needs api because we want the calendar to dynamically update with new transactions (don't want user to have to reload the page)
   const { month, year } = req.query;
   const user = req.session.user?.[0]?.username;
 
