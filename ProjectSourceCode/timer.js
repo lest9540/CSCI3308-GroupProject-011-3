@@ -148,7 +148,7 @@ async function summary() {
 
 const rule = new schedule.RecurrenceRule();
   console.log("Scheduling timer");
-  rule.hour = 12;
+  rule.minute = 16;
 
   const job = schedule.scheduleJob(rule, function(){
     console.log("Running summary function");
