@@ -321,7 +321,7 @@ app.get('/loadPieChartTransaction', async (req, res) => {
 
 app.get('/logout', (req, res) => {
     req.session.destroy();
-    res.render('pages/logout.hbs');
+    res.render('pages/logout.hbs', {redirect: true});
 });
 
 // For Calendar Partial - - - - - - - - - - - - 
