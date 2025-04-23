@@ -1,3 +1,4 @@
+{{!-- FIX TODAY BUTTON NOT WORKING --}}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -225,11 +226,20 @@
                 }
 
                 // Function that automatically selects todays date and shows transactions due "today"
-                function todayBut(){
+                async function todayBut() {
                     currentDate = new Date();
                     selectedDay = new Date();
-                    renderCalendar(currentDate);
-                    showSelectedDay(); // changes the day on the menu left of the calendar
+
+                    await renderCalendar(currentDate);
+
+                    // Find the calendar cell that represents today
+                    const dateCells = document.querySelectorAll('.date');
+                    for (const cell of dateCells) { // goes through all date cell and looks for the date that is today
+                        if (cell.classList.contains('today')) {
+                            cell.click(); // Acts as if the user is clicking on todays date
+                            break;
+                        }
+                    }
                 }
 
                 // Changes the transactions due to match the date that the user has selected
