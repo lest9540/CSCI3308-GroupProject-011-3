@@ -337,7 +337,7 @@ app.get('/api/transactions', async (req, res) => { // use api because it is used
 
   try {
     const transactions = await db.any(
-      'SELECT name, amount, final_balance FROM transactions WHERE user_id = $1 AND DATE(transaction_date) = $2',
+      'SELECT name, amount, final_balance FROM transactions WHERE user_id = $1 AND transaction_date = $2',
       [user, date]
     );
     return res.json(transactions);
@@ -360,11 +360,11 @@ app.get('/api/transaction-dates', async (req, res) => { // Like said before need
 
   try {
     const results = await db.any(
-      `SELECT DISTINCT DATE(transaction_date) AS date
+      `SELECT DISTINCT transaction_date::DATE AS date
         FROM transactions
-       WHERE user_id = $1
-         AND EXTRACT(MONTH FROM transaction_date) = $2
-         AND EXTRACT(YEAR FROM transaction_date) = $3`,
+      WHERE user_id = $1
+        AND EXTRACT(MONTH FROM transaction_date::DATE) = $2
+        AND EXTRACT(YEAR FROM transaction_date::DATE) = $3`,
       [user, month, year]
     );
 
