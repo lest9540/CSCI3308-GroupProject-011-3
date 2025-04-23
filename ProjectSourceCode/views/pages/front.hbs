@@ -10,6 +10,9 @@
             align-items: center;
             justify-content: center;
             scroll-snap-align: start;
+            background-image: url('/images/spellSaverBackground1.png');
+            background-size: cover;
+            background-position: center;
         }
 
         .featuresContainers {
@@ -34,30 +37,54 @@
             scroll-snap-align: start;
         }
 
+        .featureImage {
+            max-width: 400px;
+            height: auto;
+            border-radius: 10px;
+        }
+
         .feature1 {
-            background-color: rgb(78, 200, 200);
+            background-image: url('/images/homeWelcomeBackground.png');
+            background-size: cover;
+            background-position: center;
         }
 
         .feature2 {
-            background-color:rgb(169, 103, 231);
+            background-image: url('/images/spellSaverBackground2.png');
+            background-size: cover;
+            background-position: center;
         }
 
         .feature3 {
-            background-color:rgb(165, 94, 94);
+            background-image: url('/images/spellSaverBackground3.png');
+            background-size: cover;
+            background-position: center;
         }
 
         .feature4 {
-            background-color: rgb(174, 203, 130);
+            background-image: url('/images/spellSaverBackground2.png');
+            background-size: cover;
+            background-position: center;
         }
 
         .feature5 {
-            background-color: rgb(78, 115, 200);
+            background-image: url('/images/spellSaverBackground3.png');
+            background-size: cover;
+            background-position: center;
         }
 
         .textBlock {
             display: flex;
             flex-direction: column;
             align-items: left;
+        }
+
+        h1 {
+            color: #ffe59a;
+        }
+
+        p {
+            color: #ffe59a;
         }
 
     </style>
@@ -91,26 +118,30 @@
 
             <!--Link to Register and Login-->
             <div style="d-flex flex-wrap justify-content-center gap-3 mt-4">
-                <a href="/register" class="btn btn-primary"> Register </a>
-                <a href="/login" class="btn btn-primary"> Login </a>
+                <a href="/register" class="btn btn-primary" style="background-color: #8e7cc3;"> Register </a>
+                <a href="/login" class="btn btn-primary" style="background-color: #8e7cc3;"> Login </a>
             </div>
         </div>
 
         <!-- Feature Display Section -->
         <section id = "Section1">
             <div class="featureDisplay feature1">
-                <img src="https://placehold.co/300x300"> </img>
+                <div class="featureImage">
+                    <img src="/images/spellSaverCat.png" class="img-fluid rounded-circle"> </img>
+                </div>
 
                 <div class="textBlock">
                     <h1> About Us </h1>
-                    <p> Description1 </p>
+                    <p> We Want to help people through organizing their financials </p>
                 </div>
             </div>
         </section>
         
         <section id = "Section2">
             <div class="featureDisplay feature2">
-                <img src="../../images/transaction_history.png"> </img>
+                <div class="featureImage">
+                    <img src="/images/transaction_history.png" class="img-fluid"> </img>
+                </div>
 
                 <div class="textBlock">
                     <h1> Track Your Transaction History </h1>
@@ -121,7 +152,9 @@
 
         <section id = "Section3">
             <div class="featureDisplay feature3">
-                <img src="../../images/pie_charts.png"> </img>
+                <div class="featureImage">
+                    <img src="/images/pie_charts.png" class="img-fluid"> </img>
+                </div>
                 
                 <div class="textBlock">
                     <h1> Make Your Own Charts </h1>
@@ -132,7 +165,9 @@
 
         <section id = "Section4">
             <div class="featureDisplay feature4">
-                <img src="../../images/calendar.png"> </img>
+                <div class="featureImage">
+                    <img src="/images/calendar.png" class="img-fluid"> </img>
+                </div>
                 
                 <div class="textBlock">
                     <h1> See Your Activities through the Month </h1>
@@ -143,7 +178,9 @@
 
         <section id = "Section5">
             <div class="featureDisplay feature5">
-                <img src="https://placehold.co/300x300"> </img>
+                <div class="featureImage">
+                    <img src="/images/email.png" class="img-fluid"> </img>
+                </div>
 
                 <div class="textBlock">
                     <h1> Keep up to Date with Notifications </h1>

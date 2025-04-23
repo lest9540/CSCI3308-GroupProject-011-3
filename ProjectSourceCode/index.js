@@ -61,6 +61,9 @@ app.use(
   })
 );
 
+// Setting up to allow images
+app.use(express.static('public'));
+
 // Authentication Middleware.
 const auth = (req, res, next) => {
     if (!req.session.user) {
@@ -141,7 +144,7 @@ app.post('/register', async (req, res) => {
 });
 
 app.get('/', (req, res) => {
-    res.redirect('/login');
+    res.redirect('/front');
 });
 
 // Authentication Required past here
