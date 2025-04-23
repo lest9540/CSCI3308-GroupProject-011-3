@@ -20,12 +20,12 @@ const hbs = handlebars.create({
 // database configuration
 const dbConfig = {
   host: process.env.POSTGRES_HOST || 'db',
-  port: 5432,
+  port: process.env.POSTGRES_PORT || 5432,
   database: process.env.POSTGRES_DB,
   user: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,
   email: process.env.POSTGRES_EMAIL,
-  reminders: process.env.POSTGRES_REMINDERS,
+  secret: process.env.POSTGRES_SECRET
 };
 
 const db = pgp(dbConfig);
