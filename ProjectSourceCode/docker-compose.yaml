@@ -1,6 +1,6 @@
 version: '3.9'
 services:
-  db:
+  users_db_m3br:
     image: postgres:14
     env_file: .env
     expose:
@@ -16,7 +16,7 @@ services:
     environment:
       - NODE_ENV=development
     depends_on:
-      - db
+      - users_db_m3br
     ports:
       - '3000:3000'
     volumes:
@@ -30,7 +30,7 @@ services:
     environment:
       - NODE_ENV=development
     depends_on:
-      - db
+      - users_db_m3br
     volumes:
       - ./:/repository
     command: 'npm run timer' #npm run timer 
