@@ -12,7 +12,9 @@ CREATE TABLE transactions (
     user_id VARCHAR(50) NOT NULL,
     name VARCHAR(50) NOT NULL,
     category VARCHAR(50) NOT NULL,
-    transaction_date VARCHAR(10) NOT NULL,
+    month VARCHAR(2) NOT NULL,
+    day VARCHAR(2) NOT NULL,
+    year VARCHAR(4) NOT NULL,
     amount DECIMAL(10, 2) NOT NULL,
     final_balance DECIMAL(10, 2) NOT NULL
 );

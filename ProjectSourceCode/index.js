@@ -182,9 +182,10 @@ app.post('/settings', async (req, res) => {
     });
   });
 
-  app.get('/banking', async (req, res) => {
+app.get('/banking', async (req, res) => {
     try{
       let results = await db.any('SELECT * FROM transactions WHERE user_id = $1', [req.session.user[0].username]);
+      console.log(results);
       res.render('pages/banking', {transactions: results});
     } catch (error) {
       console.log(error);
@@ -193,10 +194,14 @@ app.post('/settings', async (req, res) => {
 });
 
 app.post('/addTransaction', (req, res) => {
-  const date = new Date(req.body.transactionDate);
-  const formattedDate = date.toISOString().split('T')[0]; // Format date to YYYY-MM-DD
-  req.body.transactionDate = formattedDate;
-  db.none('INSERT INTO transactions(user_id, name, category, transaction_date, amount, final_balance) VALUES($1, $2, $3, $4, $5, $6)', [req.session.user[0].username, req.body.transactionName, req.body.category, formattedDate, req.body.transactionAmount, req.body.finalBalance]);
+  const date = new Date(req.body.transactionDate); // Format date to YYYY-MM-DD
+  const formattedDate = {
+    year: date.getFullYear(),
+    month: date.getMonth() + 1,
+    day: date.getDate(),
+  }
+  console.log(formattedDate);
+  db.none('INSERT INTO transactions(user_id, name, category, month, day, year, amount, final_balance) VALUES($1, $2, $3, $4, $5, $6, $7, $8)', [req.session.user[0].username, req.body.transactionName, req.body.category, formattedDate.month, formattedDate.day, formattedDate.year, req.body.transactionAmount, req.body.finalBalance]);
   res.redirect('/banking');
 });
 
