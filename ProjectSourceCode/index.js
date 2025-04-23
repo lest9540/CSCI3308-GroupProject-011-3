@@ -342,8 +342,11 @@ app.get('/api/transactions', async (req, res) => { // use api because it is used
 
   try {
     const transactions = await db.any(
-      'SELECT name, amount, final_balance FROM transactions WHERE user_id = $1 AND transaction_date = $2',
-      [user, date]
+      `SELECT name, amount, final_balance
+        FROM transactions
+        WHERE user_id = $1
+          AND TO_DATE(year || '-' || month || '-' || day, 'YYYY-MM-DD') = $2`,
+        [user, date]
     );
     return res.json(transactions);
 
@@ -355,7 +358,7 @@ app.get('/api/transactions', async (req, res) => { // use api because it is used
 });
 
 // Updates the indicators on the calendar dates (updates the lines to show that there is a transaction due on this date)  
-app.get('/api/transaction-dates', async (req, res) => { // Like said before needs api because we want the calendar to dynamically update with new transactions (don't want user to have to reload the page)
+app.get('/api/transaction-dates', async (req, res) => {
   const { month, year } = req.query;
   const user = req.session.user?.[0]?.username;
 
@@ -365,22 +368,22 @@ app.get('/api/transaction-dates', async (req, res) => { // Like said before need
 
   try {
     const results = await db.any(
-      `SELECT DISTINCT transaction_date::DATE AS date
-        FROM transactions
-      WHERE user_id = $1
-        AND EXTRACT(MONTH FROM transaction_date::DATE) = $2
-        AND EXTRACT(YEAR FROM transaction_date::DATE) = $3`,
+      `SELECT DISTINCT TO_DATE(year || '-' || month || '-' || day, 'YYYY-MM-DD') AS date
+       FROM transactions
+       WHERE user_id = $1
+         AND CAST(month AS INTEGER) = $2
+         AND year = $3`,
       [user, month, year]
     );
 
     const formatted = results.map(row => row.date.toISOString().split('T')[0]);
     return res.json(formatted);
-
   } catch (error) {
     console.error('Error getting transaction dates:', error);
     return res.status(500).json({ error: 'Server Error' });
   }
 });
+
 // - - - - - - - - - - - - - - - - - - - - - - -
 
 module.exports = app.listen(3000);
