@@ -20,7 +20,7 @@ const hbs = handlebars.create({
 
 // database configuration
 const dbConfig = {
-  host: process.env.POSRGRES_HOST || 'db',
+  host: process.env.POSTGRES_HOST || 'db',
   port: 5432,
   database: process.env.POSTGRES_DB,
   user: process.env.POSTGRES_USER,
@@ -185,23 +185,36 @@ app.post('/settings', async (req, res) => {
 app.get('/banking', async (req, res) => {
     try{
       let results = await db.any('SELECT * FROM transactions WHERE user_id = $1', [req.session.user[0].username]);
-      console.log(results);
-      res.render('pages/banking', {transactions: results});
+      let budget = await db.one('SELECT budget FROM users WHERE username = $1', [req.session.user[0].username]);
+      res.render('pages/banking', {transactions: results, budget: budget.budget});
     } catch (error) {
       console.log(error);
-      res.render('pages/banking', {transactions: []});
+      res.render('pages/banking', {transactions: [], budget: 0});
     }
 });
 
-app.post('/addTransaction', (req, res) => {
+app.post('/addTransaction', async (req, res) => {
   const date = new Date(req.body.transactionDate); // Format date to YYYY-MM-DD
   const formattedDate = {
     year: date.getFullYear(),
     month: date.getMonth() + 1,
     day: date.getDate(),
   }
-  console.log(formattedDate);
-  db.none('INSERT INTO transactions(user_id, name, category, month, day, year, amount, final_balance) VALUES($1, $2, $3, $4, $5, $6, $7, $8)', [req.session.user[0].username, req.body.transactionName, req.body.category, formattedDate.month, formattedDate.day, formattedDate.year, req.body.transactionAmount, req.body.finalBalance]);
+  let budget = await db.one('SELECT budget FROM users WHERE username = $1', [req.session.user[0].username]);
+  let spending = await db.one('SELECT SUM(amount) FROM transactions WHERE user_id = $1', [req.session.user[0].username]);
+  console.log(budget.budget);
+  console.log(spending.sum);
+  if (spending.sum == null) {
+    spending.sum = 0;
+  }
+  let finalBalance = budget.budget - spending.sum - req.body.transactionAmount;
+  console.log(finalBalance);
+  db.none('INSERT INTO transactions(user_id, name, category, month, day, year, amount, final_balance) VALUES($1, $2, $3, $4, $5, $6, $7, $8)', [req.session.user[0].username, req.body.transactionName, req.body.category, formattedDate.month, formattedDate.day, formattedDate.year, req.body.transactionAmount, finalBalance]);
+  res.redirect('/banking');
+});
+
+app.post('/updateBudget', async (req, res) => {
+  await db.none('UPDATE users SET budget = $1 WHERE username = $2', [req.body.budget, req.session.user[0].username]);
   res.redirect('/banking');
 });
 

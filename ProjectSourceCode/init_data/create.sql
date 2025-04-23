@@ -3,7 +3,8 @@ CREATE TABLE users (
     username VARCHAR(50) PRIMARY KEY,
     password VARCHAR(60) NOT NULL,
     email VARCHAR(100) NOT NULL,
-    reminders BOOLEAN NOT NULL DEFAULT FALSE
+    reminders BOOLEAN NOT NULL DEFAULT FALSE,
+    budget DECIMAL(10, 2) DEFAULT 0.00
 );
 SELECT * FROM users;
 
