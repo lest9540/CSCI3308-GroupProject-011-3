@@ -1,0 +1,215 @@
+<style>
+    body {
+        text-align: center;
+    }
+        
+    .pieChart {
+        width: 250px;
+        height: 250px;
+        border-radius: 50%;
+        background: lightgray;
+        border: 1px solid;
+        border-color: rgb(107, 107, 107);
+        margin: auto;
+        background-color: gray;
+    }
+
+    .buttonContainer{
+        margin-bottom: 50px;
+    }
+
+    .legendContainer{
+        display: flex;
+        align-items: center;
+        margin-top: 10px;
+    }
+
+    .legendItem{
+        display: flex;
+        align-items: center;
+        margin-right: 5px;
+    }
+
+    .legendColor{
+        width: 15px;
+        height: 15px;
+        margin-right: 5px;
+        border-radius: 100%;
+    }
+</style>
+
+<!--General section on the banking page-->
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">Planner Pie Chart</h5>
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#pieChartModal"> Customize Piechart </button>
+        </div>
+        <div class="card-body">
+            <!--Piechart Visuals-->
+            <div class = "pieChart"></div>
+
+            <div class = "legendContainer" id="plannerPieChartLegend"> 
+                <div class="legendItem">
+                    <div class="legendColor"></div>
+                    <div class="legendColor" style="background-color: #e74e4e;"></div>
+                    <span id="recurringLegend">Recurring Expenses: 0%</span>
+                </div>
+
+                <div class="legendItem">
+                    <div class="legendColor"></div>
+                    <div class="legendColor" style="background-color: #f68849;"></div>
+                    <span id="groceryLegend">Groceries: 0%</span>
+                </div>
+
+                <div class="legendItem">
+                    <div class="legendColor"></div>
+                    <div class="legendColor" style="background-color: #70ed78;"></div>
+                    <span id="personalLegend">Personal Expenses: 0%</span>
+                </div>
+
+                <div class="legendItem">
+                    <div class="legendColor"></div>
+                    <div class="legendColor" style="background-color: #4881ed;"></div>
+                    <span id="miscellaneousLegend">Miscellaneous: 0%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    
+<!-- Piechart Modal -->
+<div class="modal fade" id="pieChartModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!--Modal Header-->
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">Make your Piechart</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <!--Modal Body-->
+            <div class="modal-body">
+                <form id = "pieChartCategories">
+                    <div class="mb-3">
+                        <label for="pieChartCategory1" class="form-label">Recurring Expense</label>
+                        <input type="number" class="form-control" id="recurringPercentage" placeholder="Enter percentage">
+                        <input type="color" class="form-control form-control-color" id="recurringColor" value="#e74e4e" title="Choose your color">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="pieChartCategory2" class="form-label">Groceries</label>
+                        <input type="number" class="form-control" id="groceriesPercentage" placeholder="Enter percentage">
+                        <input type="color" class="form-control form-control-color" id="groceriesColor" value="#f68849" title="Choose your color">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="pieChartCategory3" class="form-label">Personal Spending</label>
+                        <input type="number" class="form-control" id="personalPercentage" placeholder="Enter percentage">
+                        <input type="color" class="form-control form-control-color" id="personalColor" value="#70ed78" title="Choose your color">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="pieChartCategory4" class="form-label">Miscellaneous</label>
+                        <input type="number" class="form-control" id="miscellaneousPercentage" placeholder="Enter percentage">
+                        <input type="color" class="form-control form-control-color" id="miscellaneousColor" value="#4881ed" title="Choose your color">
+                    </div>
+                </form>
+            </div>
+
+                <!--Modal Footer-->
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="updatePlannerPieChart()" data-bs-dismiss="modal">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Script-->
+<script>
+    // Updating Piechart function
+    function updatePlannerPieChart(){
+        // Storing percantages of each category in a list
+        const percentageList = [
+            parseFloat(document.getElementById("recurringPercentage").value) || 0,
+            parseFloat(document.getElementById("groceriesPercentage").value) || 0,
+            parseFloat(document.getElementById("personalPercentage").value) || 0,
+            parseFloat(document.getElementById("miscellaneousPercentage").value) || 0,
+        ];
+
+        // Storing the colors for each category
+        const colorList = ["#e74e4e", "#f68849", "#70ed78", "#4881ed"];
+
+        // Checking total percent values to make sure its between 0 and 100
+        let total = percentageList[0] + percentageList[1] + percentageList[2] + percentageList[3];
+
+        if(total > 100 || total == 0){
+            return
+        }
+
+            // Saving planner piechart data to database
+        fetch('/postPlannerPieChartData', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json',},
+            body: JSON.stringify({
+                recurring_percentage: percentageList[0],
+                groceries_percentage: percentageList[1],
+                personal_percentage: percentageList[2],
+                miscellaneous_percentage: percentageList[3],
+            })
+        })
+
+        // For loop to fill in the gradient
+        let gradientCommands = "";
+        let percentAccumulator = 0;
+        let percentageListLength = percentageList.length;
+
+        for(let i = 0; i < percentageListLength; i++){
+            let start = (percentAccumulator / total) * 100;
+            percentAccumulator += percentageList[i]
+            let end = (percentAccumulator / total) * 100;
+
+            // Concats commands into a single variable
+            gradientCommands += `${colorList[i]} ${start}% ${end}%,`;
+        }
+
+        // Updating .piechart conic gradient
+        document.querySelector(".pieChart").style.background = `conic-gradient(${gradientCommands.slice(0, -1)})`;
+
+        // Updating the legend
+        updateLegend(percentageList);
+    }
+
+
+    // Function for updating the legend's percentages
+    function updateLegend(percentageList){
+        document.getElementById("recurringLegend").textContent = `Recurring Expenses: ${percentageList[0]}%`;   
+        document.getElementById("groceryLegend").textContent = `Groceries: ${percentageList[1]}%`; 
+        document.getElementById("personalLegend").textContent = `Personal Expenses: ${percentageList[2]}%`; 
+        document.getElementById("miscellaneousLegend").textContent = `Miscellaneous: ${percentageList[3]}%`; 
+    }
+
+
+    // Event script when the window is loaded, update the piechart to what the user has saved, leave empty otherwise
+    window.onload = async () => {
+        try {
+            // Request to get the planner pie chart data from database
+            const response = await fetch('/loadPlannerPieChartData');
+            const pieChartData = await response.json();
+            
+            // Stores database data into the html's variables
+            document.getElementById('recurringPercentage').value = pieChartData.recurring_percentage;
+            document.getElementById('groceriesPercentage').value = pieChartData.groceries_percentage;
+            document.getElementById('personalPercentage').value = pieChartData.personal_percentage;
+            document.getElementById('miscellaneousPercentage').value = pieChartData.miscellaneous_percentage;
+            
+            // Calls the function to update the piechart
+            updatePlannerPieChart(); 
+        } catch (error) {
+            console.error('Error loading pie chart data:', error);
+        }
+    }
+</script>
