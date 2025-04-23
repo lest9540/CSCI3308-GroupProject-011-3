@@ -1,6 +1,3 @@
-// import FormData from "form-data"; // form-data v4.0.1
-// import Mailgun from "mailgun.js"; // mailgun.js v11.1.0
-
 const express = require('express');
 const app = express();
 const handlebars = require('express-handlebars');
@@ -11,7 +8,6 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const bcrypt = require('bcryptjs');
 const axios = require('axios');
-const nodemailer = require('nodemailer');
 const mail = require('mailgun.js');
 const { error } = require('console');
 
@@ -58,7 +54,6 @@ app.use(
     
   })
 );
-
 
 app.use(
   bodyParser.urlencoded({
@@ -187,34 +182,10 @@ app.post('/settings', async (req, res) => {
     });
   });
 
-// app.get('/discover', (req, res) => {
-//     axios({
-//         url: `https://app.ticketmaster.com/discovery/v2/events.json`,
-//         method: 'GET',
-//         dataType: 'json',
-//         headers: { 'Accept-Encoding': 'application/json'},
-//         params: {
-//             apikey: process.env.API_KEY,
-//             keyword: 'Muse',
-//             size: 10
-//         }
-//     })
-//     .then(results => { 
-//         // the results will be displayed on the terminal if the docker containers are running 
-//         res.render('pages/discover', {event: results.data._embedded.events});
-//         // Send some parameters
-//     })
-//     .catch(error => { 
-//         console.log(error);
-//         res.render(400, 'pages/discover', {event: []});
-//     });
-// });
-
-app.get('/banking', async (req, res) => {
+  app.get('/banking', async (req, res) => {
     try{
       let results = await db.any('SELECT * FROM transactions WHERE user_id = $1', [req.session.user[0].username]);
       res.render('pages/banking', {transactions: results});
-      // console.log(results);
     } catch (error) {
       console.log(error);
       res.render('pages/banking', {transactions: []});
@@ -222,10 +193,6 @@ app.get('/banking', async (req, res) => {
 });
 
 app.post('/addTransaction', (req, res) => {
-  const date = new Date(req.body.transactionDate);
-  const formattedDate = date.toISOString().split('T')[0]; // Format date to YYYY-MM-DD
-  req.body.transactionDate = formattedDate;
-  console.log(req.body);
   db.none('INSERT INTO transactions(user_id, name, category, transaction_date, amount, final_balance) VALUES($1, $2, $3, $4, $5, $6)', [req.session.user[0].username, req.body.transactionName, req.body.category, req.body.transactionDate, req.body.transactionAmount, req.body.finalBalance]);
   res.redirect('/banking');
 });

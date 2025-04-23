@@ -5,6 +5,7 @@ CREATE TABLE users (
     email VARCHAR(100) NOT NULL,
     reminders BOOLEAN NOT NULL DEFAULT FALSE
 );
+SELECT * FROM users;
 
 DROP TABLE IF EXISTS transactions;
 CREATE TABLE transactions (

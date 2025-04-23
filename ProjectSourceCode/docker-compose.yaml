@@ -22,5 +22,17 @@ services:
     volumes:
       - ./:/repository
     command: 'npm run testandrun' #TODO: change the command to `npm run testandrun` to run mocha or 'npm start' conversly
+  bg:
+    image: node:lts
+    user: 'root'
+    working_dir: /repository
+    env_file: .env
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - db
+    volumes:
+      - ./:/repository
+    command: 'npm run timer' #npm run timer 
 volumes:
   group-project:
