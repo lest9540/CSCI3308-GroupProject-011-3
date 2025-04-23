@@ -197,7 +197,6 @@ app.post('/addTransaction', (req, res) => {
   const formattedDate = date.toISOString().split('T')[0]; // Format date to YYYY-MM-DD
   req.body.transactionDate = formattedDate;
   db.none('INSERT INTO transactions(user_id, name, category, transaction_date, amount, final_balance) VALUES($1, $2, $3, $4, $5, $6)', [req.session.user[0].username, req.body.transactionName, req.body.category, formattedDate, req.body.transactionAmount, req.body.finalBalance]);
-  db.none('INSERT INTO transactions(user_id, name, category, transaction_date, amount, final_balance) VALUES($1, $2, $3, $4, $5, $6)', [req.session.user[0].username, req.body.transactionName, req.body.category, req.body.transactionDate, req.body.transactionAmount, req.body.finalBalance]);
   res.redirect('/banking');
 });
 
