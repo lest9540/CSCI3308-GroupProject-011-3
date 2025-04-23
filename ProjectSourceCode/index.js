@@ -8,6 +8,8 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const bcrypt = require('bcryptjs');
 const axios = require('axios');
+const mail = require('mailgun.js');
+const { error } = require('console');
 
 // create `ExpressHandlebars` instance and configure the layouts and partials dir.
 const hbs = handlebars.create({
@@ -23,6 +25,8 @@ const dbConfig = {
   database: process.env.POSTGRES_DB,
   user: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,
+  email: process.env.POSTGRES_EMAIL,
+  reminders: process.env.POSTGRES_REMINDERS,
 };
 
 const db = pgp(dbConfig);
@@ -47,6 +51,7 @@ app.use(
     secret: process.env.SESSION_SECRET,
     saveUninitialized: false,
     resave: false,
+    
   })
 );
 
@@ -64,7 +69,26 @@ const auth = (req, res, next) => {
     next();
 };
 
-// API Routes //
+// API Funcs //
+async function sendOptInMessage(name, email) {
+  const mailgun = new mail(FormData);
+  const mg = mailgun.client({
+    username: "api",
+    key: process.env.API_KEY || "API_KEY",
+  });
+  try {
+    const data = await mg.messages.create("sandboxa2db92420e4b4b1b985d93f3f2e6d247.mailgun.org", {
+      from: "SpellSaver <lest9540@colorado.edu>",
+      to: [name + " <" + email + ">"],
+      subject: "Thank You for Optin In",
+      text: "Congratulations " + name + ",\n\n       You have succesfully opted into regular updates about your budget with SpellSaver.\n       We will be sending you regular updates about your budget.\n\n Thank you for using SpellSaver!",
+    });
+
+    console.log(data); // logs response data
+  } catch (error) {
+    console.log(error); //logs any error
+  }
+}
 
 app.get('/welcome', (req, res) => {
   res.json({status: 'success', message: 'Welcome!'});
@@ -74,15 +98,10 @@ app.get('/login', (req, res) => {
     res.render('pages/login.hbs')
 });
 
-//---------------------------------------------------------------------------------------------
-//front_page branch
-
 // .get for the front page
 app.get('/front', (req, res) => {
   res.render('pages/front');
 });
-
-//---------------------------------------------------------------------------------------------
 
 app.post("/login", async (req, res) => {
     try {db.any('SELECT * FROM users WHERE username = $1', [req.body.username]) 
@@ -95,7 +114,7 @@ app.post("/login", async (req, res) => {
             if (match) { // found user and password
                 req.session.user = user;
                 req.session.save();
-                res.redirect('/discover');
+                res.redirect('/user');
             }
             else { // found user wrong password
                 res.render('pages/login.hbs')
@@ -117,46 +136,187 @@ app.post('/register', async (req, res) => {
     })
     .catch(error => {
       console.log(error);
-      res.redirect(400, '/register');
+      res.redirect('/register');
     });
 });
-
-// Authentication Required past here
-app.use(auth);
 
 app.get('/', (req, res) => {
     res.redirect('/login');
 });
 
-app.get('/user', (req, res) => {
-  res.render('pages/user')
+// Authentication Required past here
+app.use(auth);
+
+app.get('/user', async (req, res) => {
+  var flag = req.session.user[0].reminders;
+  if (flag == undefined) { // default off value is technically undefined
+    flag = false;
+  }
+  res.render('pages/user', {username: req.session.user[0].username, email: req.session.user[0].email, OptIn: flag});
 });
 
 app.get('/settings', (req, res) => {
-    res.render('pages/settings')
+  res.render('pages/settings', {OptIn: req.session.user[0].reminders});
 });
 
-app.get('/discover', (req, res) => {
-    axios({
-        url: `https://app.ticketmaster.com/discovery/v2/events.json`,
-        method: 'GET',
-        dataType: 'json',
-        headers: { 'Accept-Encoding': 'application/json'},
-        params: {
-            apikey: process.env.API_KEY,
-            keyword: 'Muse',
-            size: 10
-        }
+app.post('/settings', async (req, res) => {
+  var flag = req.body.EmailOptIn;
+  if (flag == undefined) { // default off value is technically undefined
+    flag = false;
+  }
+  else if (flag == 'on') {
+    flag = true;
+  }
+
+  db.any('UPDATE users SET reminders = $1 WHERE username = $2', [flag, req.session.user[0].username])
+    .then(() => {
+      if (flag) {
+        sendOptInMessage(req.session.user[0].username, req.session.user[0].email);
+      }
+      req.session.user[0].reminders = flag;
+      res.render('pages/user', {name: req.session.user[0].user, email: req.session.user[0].email, OptIn: flag});
     })
-    .then(results => { 
-        // the results will be displayed on the terminal if the docker containers are running 
-        res.render('pages/discover', {event: results.data._embedded.events});
-        // Send some parameters
-    })
-    .catch(error => { 
-        console.log(error);
-        res.render(400, 'pages/discover', {event: []});
+    .catch(error => {
+      console.log(error);
+      res.render('pages/user', {name: req.session.user[0].user, email: req.session.user[0].email, OptIn: flag});
     });
+  });
+
+  app.get('/banking', async (req, res) => {
+    try{
+      let results = await db.any('SELECT * FROM transactions WHERE user_id = $1', [req.session.user[0].username]);
+      res.render('pages/banking', {transactions: results});
+    } catch (error) {
+      console.log(error);
+      res.render('pages/banking', {transactions: []});
+    }
+});
+
+app.post('/addTransaction', (req, res) => {
+  const date = new Date(req.body.transactionDate);
+  const formattedDate = date.toISOString().split('T')[0]; // Format date to YYYY-MM-DD
+  req.body.transactionDate = formattedDate;
+  db.none('INSERT INTO transactions(user_id, name, category, transaction_date, amount, final_balance) VALUES($1, $2, $3, $4, $5, $6)', [req.session.user[0].username, req.body.transactionName, req.body.category, formattedDate, req.body.transactionAmount, req.body.finalBalance]);
+  res.redirect('/banking');
+});
+
+// Post to send planner piechart data to the database
+app.post('/postPlannerPieChartData', async (req, res) => {
+
+  // Grabbing the input data from the html and getting the logged in user's username
+  const {recurring_percentage, groceries_percentage, personal_percentage, miscellaneous_percentage} = req.body;
+  const userId = req.session.user[0].username
+
+  // Insert into the database table, returns success/error
+  try{
+    await db.none(
+      `INSERT INTO plannerPiechartData(user_id, recurring_percentage, groceries_percentage, personal_percentage, miscellaneous_percentage)
+      VALUES($1, $2, $3, $4, $5)
+      ON CONFLICT (user_id)
+      DO UPDATE SET recurring_percentage = $2, groceries_percentage = $3, personal_percentage = $4, miscellaneous_percentage = $5`,
+      [userId, recurring_percentage, groceries_percentage, personal_percentage, miscellaneous_percentage]
+    );
+    res.json({message: "Planner pie chart data saved successfully"});
+
+  } catch (error) {
+    console.error("Error saving the planner pie chart data", error);
+  }
+});
+
+// Gets data from planner piechart database table and returns query
+app.get('/loadPlannerPieChartData', async (req, res) => {
+
+  // Takes logged in user's username
+  const userId = req.session.user[0].username; 
+  
+  // Query to find username in the plannerPiechartData table to return the stored data
+  try {
+    const piePlannerChartData = await db.oneOrNone('SELECT * FROM plannerPiechartData WHERE user_id = $1', [userId]);
+    
+    if (piePlannerChartData) {
+      res.json(piePlannerChartData);
+    } else {
+      res.json({
+        recurring_percentage: 0,
+        groceries_percentage: 0,
+        personal_percentage: 0,
+        miscellaneous_percentage: 0
+      });
+    }
+  } catch (error) {
+    console.error('Error loading pie chart data:', error);
+  }
+});
+
+// Grabs transaction history data, calculates percentages and returns list of percentages
+app.get('/loadPieChartTransaction', async (req, res) => {
+  const userId = req.session.user[0].username; 
+  
+  // Query to grab transactions by user
+  try {
+    const userTransactions = await db.any(
+      `SELECT *
+      FROM transactions
+      WHERE user_id = $1`,
+      [userId]
+    );
+
+    let total = 0;
+    let recurringTotal = 0;
+    let groceriesTotal = 0;
+    let personalTotal = 0;
+    let miscTotal = 0;
+
+    // Loop that goes through each transaction and adds money to each total
+    userTransactions.forEach(transaction => {
+      const amountTemp = parseFloat(transaction.amount);
+      total += amountTemp;
+
+      switch(transaction.category) {
+        case 'Recurring Expense':
+            recurringTotal += amountTemp;
+          break;
+        case 'Groceries':
+            groceriesTotal += amountTemp;
+          break;
+        case 'Personal Spending':
+            personalTotal += amountTemp;
+          break;
+        case 'Miscellaneous':
+            miscTotal += amountTemp;
+          break;
+        default:
+          break;
+      }
+    });
+
+    // Calculating percentages for each category
+    const recurringPercentage = (recurringTotal / total) * 100;
+    const groceriesPercentage = (groceriesTotal / total) * 100;
+    const personalPercentage = (personalTotal / total) * 100;
+    const miscPercentage = (miscTotal / total) * 100;
+
+    // Checks to see if the total is positive, if not returns 0
+    if (total > 0){
+      return res.json({
+        recurring_percentage: Number(recurringPercentage.toFixed(1)),
+        groceries_percentage: Number(groceriesPercentage.toFixed(1)),
+        personal_percentage: Number(personalPercentage.toFixed(1)),
+        miscellaneous_percentage: Number(miscPercentage.toFixed(1))
+      });
+    } else {
+      return res.json({
+        recurring_percentage: 0,
+        groceries_percentage: 0,
+        personal_percentage: 0,
+        miscellaneous_percentage: 0
+      });
+    }
+
+  } catch (error) {
+    console.error('Error loading pie chart data from transaction history:', error);
+    return res.status(500).json({ error: 'Error loading transactions'})
+  }
 });
 
 app.get('/logout', (req, res) => {

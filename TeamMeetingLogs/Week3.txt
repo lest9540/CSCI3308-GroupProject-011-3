@@ -1,0 +1,13 @@
+Zoom Link: https://cuboulder.zoom.us/j/91432440899
+
+4/11/2025 -------------
+George made it so that the trasnactions page saves even when you log out, but he still needs to fix how it looks
+Nhan did some home page changes
+a. Plans to work on the pie chart
+Leon started working with the API's for having email notifications
+Trinity added a pop up for when you log in and log out and is having trouble with compilation because tests aren't going through
+a. Plans to work on the Calendar
+
+Left over work on banking page
+Calendar -> start later because now we have transaction
+Pie Chart -> start later because now we have transaction

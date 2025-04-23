@@ -10,7 +10,8 @@
                         <thead>
                             <tr>
                                 <th scope="col">Date</th>
-                                <th scope="col">Transaction</th>
+                                <th scope="col">Category</th>
+                                <th scope="col">Name</th>
                                 <th scope="col">Amount</th>
                                 <th scope="col">Ending Balance</th>
                             </tr>
@@ -18,10 +19,11 @@
                         <tbody>
                             {{#each transactions}}
                                 <tr>
-                                    <td>{{date}}</td>
+                                    <td>{{transaction_date}}</td>
+                                    <td>{{category}}</td>
                                     <td>{{name}}</td>
                                     <td>{{amount}}</td>
-                                    <td>{{balance}}</td>
+                                    <td>{{final_balance}}</td>
                                 </tr>
                             {{/each}}
                         </tbody>
@@ -38,20 +40,29 @@
                 </div>
                 <form action="/addTransaction" method="POST">
                     <div class="mb-3">
-                        <label for="transactionName" class="form-label">Transaction Name</label>
-                        <input type="text" class="form-control" id="transactionName" placeholder="Enter transaction name">
+                        <label for="transactionName" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="transactionName" name="transactionName" placeholder="Enter transaction name" required>
                     </div>
                     <div class="mb-3">
-                        <label for="transactionDate" class="form-label">Transaction Date</label>
-                        <input type="date" class="form-control" id="transactionDate">
+                        <label for="transactionCategory" class="form-label">Category</label>
+                        <select class="form-select" name="category" required>
+                            <option value="Recurring Expense">Recurring Expense</option>
+                            <option value="Groceries">Groceries</option>
+                            <option value="Personal Spending">Personal Spending</option>
+                            <option value="Miscellaneous">Miscellaneous</option>
+                        </select>
+                        </div>
+                    <div class="mb-3">
+                        <label for="transactionDate" class="form-label">Date</label>
+                        <input type="date" class="form-control" id="transactionDate" name="transactionDate" required>
                     </div>
                     <div class="mb-3">
-                        <label for="transactionAmount" class="form-label">Transaction Amount</label>
-                        <input type="number" class="form-control" id="transactionAmount" placeholder="Enter transaction amount">
+                        <label for="transactionAmount" class="form-label">Amount</label>
+                        <input type="number" class="form-control" id="transactionAmount" name="transactionAmount" placeholder="Enter transaction amount" required>
                     </div>
                     <div class="mb-3">
                         <label for="endingBalance" class="form-label">Ending Balance</label>
-                        <input type="number" class="form-control" id="endingBalance" placeholder="Enter ending balance">
+                        <input type="number" class="form-control" id="finalBalance" placeholder="Enter ending balance" name="finalBalance" required>
                     </div>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary">Add Transaction</button>

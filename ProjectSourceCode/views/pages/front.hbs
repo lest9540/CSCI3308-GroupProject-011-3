@@ -1,7 +1,4 @@
 {{>message}}
-
-<!DOCTYPE html>
-<html>
 <head>
     <style>
         .welcomeContainer {
@@ -12,11 +9,15 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            scroll-snap-align: start;
         }
 
         .featuresContainers {
             height: 100vh;
             width: 100%;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
         }
         
         .featuresContainers h1 {
@@ -30,6 +31,7 @@
             align-items: center;
             justify-content: center;
             gap: 20px;
+            scroll-snap-align: start;
         }
 
         .feature1 {
@@ -52,38 +54,82 @@
 </head>
 
 <body>
-    <!-- Welcome and Logo Section -->
-    <div class="welcomeContainer" >
-        <h1 style="font-size: 100px;"> Welcome to SpellSaver </h1>
-
-        <div class="container mt-5"> 
-            <img src="https://placehold.co/300x300" class="rounded-circle mx-auto d-block" alt="Logo Here"> </img>
-        </div>
-
-        <p style="font-size: 30px"> Vision Statement goes here </p>
-    </div>
+    {{>message}}
+    
 
     <!-- Features -->
     <div class="featuresContainers">
+
+        <!-- Welcome and Logo Section -->
+        <div class="welcomeContainer" >
+            <h1 style="font-size: 100px;"> Welcome to SpellSaver </h1>
+
+            <div class="container mt-5"> 
+                <img src="https://placehold.co/300x300" class="rounded-circle mx-auto d-block" alt="Logo Here"> </img>
+            </div>
+
+            <p style="font-size: 30px"> Vision Statement goes here </p>
+
+            <!--Anchor Points-->
+            <div style="display:flex; gap: 30px;">
+                <a href="#Section1"> Section 1 </a>
+                <a href="#Section2"> Section 2 </a>
+                <a href="#Section3"> Section 3 </a>
+                <a href="#Section4"> Section 4 </a>
+            </div>
+
+            <!--Link to Register and Login-->
+            <div style="display:flex; gap: 30px;">
+                <a href="/register"> Register </a>
+                <a href="/login"> Login </a>
+            </div>
+        </div>
+
+        <!-- Feature Display Section -->
         <div class="featureDisplay feature1">
             <img src="https://placehold.co/300x300"> </img>
             <h1> Testing text 1</h1>
         </div>
+
+        <!-- Feature Display Section -->
+        <section id = "Section1">
+            <div class="featureDisplay feature1">
+                <img src="https://placehold.co/300x300"> </img>
+                <h1> Testing text 1</h1>
+            </div>
+        </section>
         
-        <div class="featureDisplay feature2">
-            <img src="https://placehold.co/300x300"> </img>
-            <h1> Testing text 2</h1>
-        </div>
+        <section id = "Section2">
+            <div class="featureDisplay feature2">
+                <img src="https://placehold.co/300x300"> </img>
+                <h1> Testing text 2</h1>
+            </div>
+        </section>
 
-        <div class="featureDisplay feature3">
-            <img src="https://placehold.co/300x300"> </img>
-            <h1> Testing text 3</h1>
-        </div>
+        <section id = "Section3">
+            <div class="featureDisplay feature3">
+                <img src="https://placehold.co/300x300"> </img>
+                <h1> Testing text 3</h1>
+            </div>
+        </section>
 
-        <div class="featureDisplay feature4">
-            <img src="https://placehold.co/300x300"> </img>
-            <h1> Testing text 4</h1>
-        </div>
+        <section id = "Section4">
+            <div class="featureDisplay feature4">
+                <img src="https://placehold.co/300x300"> </img>
+                <h1> Testing text 4</h1>
+            </div>
+        </section>
     </div>
+
+
+    <!--Scripting to arrows to go down-->
+    <script>
+        document.getElementById("scrollDown").addEventListener("click", function() {
+            
+            const down = document.querySelector(".featureDisplay")
+            if (down){
+                down.scrollIntoView({behavior: "smooth"});
+            }
+        });
+    </script>
 </body>
-</html>
