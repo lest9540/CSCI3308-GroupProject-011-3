@@ -10,6 +10,7 @@ const bcrypt = require('bcryptjs');
 const axios = require('axios');
 const mail = require('mailgun.js');
 const { error } = require('console');
+const { spawn } = require('child_process');
 
 // create `ExpressHandlebars` instance and configure the layouts and partials dir.
 const hbs = handlebars.create({
@@ -44,6 +45,29 @@ app.engine('hbs', hbs.engine);
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(bodyParser.json()); // specify the usage of JSON for parsing request body.
+
+const child = spawn('node', ['timer.js', '>', 'output.log', '2>&1', '&'], {
+  detached: true,
+  stdio: 'ignore' // Ignore stdio to fully detach
+});
+console.log('timer process started');
+
+// Let the child run independently
+child.unref();
+
+child.on('error', (err) => {
+  console.error('Failed to start process:', err);
+});
+
+// Optional: monitor when it exits
+child.on('exit', (code, signal) => {
+  if (code !== null) {
+    console.log(`Process exited with code ${code}`);
+  } else if (signal !== null) {
+    console.log(`Process killed with signal ${signal}`);
+  }
+});
+
 
 // initialize session variables
 app.use(

@@ -9,6 +9,7 @@ const session = require('express-session');
 const axios = require('axios');
 const mail = require('mailgun.js');
 const schedule = require('node-schedule');
+const { exit } = require('process');
 
 // create `ExpressHandlebars` instance and configure the layouts and partials dir.
 const hbs = handlebars.create({
@@ -69,37 +70,37 @@ async function assembleSummaryText(name, callback) {
       var cur_date = new Date();
       var cur_day = cur_date.getDate();
       var cur_month = cur_date.getMonth() + 1; // Months are zero-based
-      var temp_month = undefined;
-      var temp_day = undefined;
       // ignoring the year for scope of project
 
       for (let i = 0; i < results.length; i++) { // find all transactions this month
-        temp_month = results[i].transaction_date.getMonth() + 1;
-        temp_day = results[i].transaction_date.getDate();
+        temp_month = parseInt(results[i].month);
+        temp_day = parseInt(results[i].day);
 
         if ((cur_month != temp_month) || (temp_day > cur_day)) continue; // only summarizing this month up to today
         
-        recent_text += results[i].name + " - " + results[i].transaction_date.toLocaleDateString() + " - $" + results[i].amount + "\n";
+        recent_text += results[i].name + " - " + results[i].mongth + ', ' + results[i].day + " - $" + results[i].amount + "\n";
       }
 
       for (let i = 0; i < results.length; i++) { // find all upcoming transactions this month
-        temp_month = results[i].transaction_date.getMonth() + 1;
-        temp_day = results[i].transaction_date.getDate();
+        temp_month = parseInt(results[i].month);
+        temp_day = parseInt(results[i].day);
 
         if ((cur_month != temp_month) || (temp_day <= cur_day)) continue; // only summarizing this month after today
         
-        upcoming_text += results[i].name + " - " + results[i].transaction_date.toLocaleDateString() + " - $" + results[i].amount + "\n";
+        upcoming_text += results[i].name + " - " + results[i].mongth + ', ' + results[i].day + " - $" + results[i].amount + "\n";
       }
 
       callback("Greetings " + name + ",\n\nBecause you have opted into regular updates we have provided you the following summary for this month so far:\n\n" + recent_text + "\n" + upcoming_text + "\n Thank you for using SpellSaver!");
     })
     .catch(error => {
       console.log(error);
+      exit(-1);
       return undefined;
     });
   }
   catch(error) {
     console.log(error);
+    exit(-1);
     return undefined;
   };
 };
@@ -139,16 +140,18 @@ async function summary() {
       })
       .catch(error => {
         console.log(error);
+        exit(-1);
       })
   }
   catch (error) {
     console.log(error);
+    exit(-1);
   }
 }
 
 const rule = new schedule.RecurrenceRule();
   console.log("Scheduling timer");
-  rule.hour = 12;
+  rule.minute = 20;
 
   const job = schedule.scheduleJob(rule, function(){
     console.log("Running summary function");
